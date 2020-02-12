@@ -1,6 +1,10 @@
 const mongoose = require('mongoose')
 
 const GoodsRequest = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true
+    },
     vendor_name: {
         type: String,
         required: true
@@ -18,6 +22,10 @@ const GoodsRequest = new mongoose.Schema({
         required: true
     },
     product_purchased_details: {
+        type: String,
+        required: true
+    },
+    attachment_URL: {
         type: String,
         required: true
     },

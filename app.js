@@ -48,9 +48,9 @@ app.use(flash());
 // Globar Varivale
 app.use((req, res, next) => {
     res.locals.success_msg = req.flash('success_msg');
+    res.locals.info_msg = req.flash('info_msg');
     res.locals.error_msg = req.flash('error_msg');
     res.locals.error = req.flash('error');
-    res.locals.success_post = req.flash('success_post');
     next();
 });
 
