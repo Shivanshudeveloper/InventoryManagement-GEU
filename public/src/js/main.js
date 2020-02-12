@@ -31,8 +31,8 @@ $("#goodsRequestAttachment_btn").change((e) => {
     );
 });
 
-$("#deleteGoodsRequest").click(() => {
-    console.log("S")
+$('.deleteGoodsRequest').on('click', function(e) {
+    e.preventDefault();
     swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover this imaginary file!",
@@ -42,10 +42,10 @@ $("#deleteGoodsRequest").click(() => {
       })
       .then((willDelete) => {
         if (willDelete) {
-          $("#deleteGoodsRequest_form").submit();
+            $(this).closest('form').submit();
         } 
       });
-})
+});
 
 
 

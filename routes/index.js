@@ -18,10 +18,12 @@ router.get('/', (req, res) => {
 router.get('/dashboard', ensureAuthenticated, (req, res) => {
     req.session.name = req.user.name;
     req.session.email = req.user.email;
+    req.session.userType = req.user.type;
     req.session.userId = req.user.id;
     req.session.phone = req.user.phone;
     res.render('dashboard', {
         name: req.session.name,
+        userType: req.user.type
     });
 });
 
@@ -29,6 +31,7 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
 router.get('/goods-request-form', ensureAuthenticated, (req, res) => {
     res.render('goods-request-form', {
         name: req.session.name,
+        userType: req.session.userType
     });
 });
 
@@ -38,6 +41,7 @@ router.get('/all-goods-request', ensureAuthenticated, (req, res) => {
         .then(goods => {
             res.render('all-goods-request', {
                 name: req.session.name,
+                userType: req.session.userType,
                 goods: goods
             });
         })
@@ -59,6 +63,7 @@ router.get('/editGoodsRequest/:id', ensureAuthenticated, (req, res) => {
                 attachment_URL = goods.attachment_URL;
             res.render('editGoodsRequest', {
                 name: req.session.name,
+                userType: req.session.userType,
                 title,
                 vendor_name,
                 address,
@@ -72,6 +77,63 @@ router.get('/editGoodsRequest/:id', ensureAuthenticated, (req, res) => {
         .catch(err => console.log(err));
 });
 
+// Registar All Goods Approve
+router.get('/goods-requests', ensureAuthenticated, (req, res) => {
+    if (req.session.userType != 'registar') {
+        res.redirect('/dashboard');
+    } else {
+        GoodPurchasedForm_Model.find({approved: false})
+        .then(goods => {
+            res.render('goods-requests', {
+                name: req.session.name,
+                userType: req.session.userType,
+                goods: goods
+            });
+        })
+        .catch(err => console.log(err));
+    }
+});
+
+// Registar Disapproved
+router.get('/disapproved/:id', ensureAuthenticated, (req, res) => {
+    const id = req.params.id;
+    GoodPurchasedForm_Model.updateOne( {'_id': id }, {
+        $set: {
+            rejected: true
+        }
+    })
+    .then(() => {
+        req.flash('success_msg', 'Approved Successfully')
+        res.redirect(`/goods-requests`);
+    })
+    .catch(err => console.log(err));
+});
+
+// All Approved Goods
+router.get('/approved', ensureAuthenticated, (req, res) => {
+    GoodPurchasedForm_Model.find({approved: true})
+        .then(goods => {
+            res.render('approved-goods', {
+                name: req.session.name,
+                userType: req.session.userType,
+                goods: goods
+            });
+        })
+        .catch(err => console.log(err));
+});
+
+// All Rejected Goods
+router.get('/rejectedGoods', ensureAuthenticated, (req, res) => {
+    GoodPurchasedForm_Model.find({rejected: true})
+        .then(goods => {
+            res.render('rejectedGoods', {
+                name: req.session.name,
+                userType: req.session.userType,
+                goods: goods
+            });
+        })
+        .catch(err => console.log(err));
+});
 
 /**
  * @ POST Request
@@ -94,6 +156,7 @@ router.post('/goodsrequest', ensureAuthenticated, (req, res) => {
           quotationdetails,
           productpurchased_details,
           name: req.session.name,
+          userType: req.session.userType
         });
     }
 
@@ -106,7 +169,9 @@ router.post('/goodsrequest', ensureAuthenticated, (req, res) => {
             purchase_order_number: purchaseordernumber,
             quotation_details: quotationdetails,
             product_purchased_details: productpurchased_details,
-            attachment_URL
+            attachment_URL,
+            approved: false,
+            rejected: false
         });
         goodsPurchased.save()
             .then(() => {
@@ -146,6 +211,7 @@ router.post('/updateGoodRequestForm/:id', ensureAuthenticated, (req, res) => {
           quotationdetails,
           productpurchased_details,
           name: req.session.name,
+          userType: req.session.userType
         });
     }
     else {
@@ -166,6 +232,21 @@ router.post('/updateGoodRequestForm/:id', ensureAuthenticated, (req, res) => {
         })
         .catch(err => console.log(err));
     }
+});
+
+// Approve the process
+router.post('/approvedGoodsRequest/:id', ensureAuthenticated, (req, res) => {
+    const id = req.params.id;
+    GoodPurchasedForm_Model.updateOne( {'_id': id }, {
+        $set: {
+            approved: true
+        }
+    })
+    .then(() => {
+        req.flash('success_msg', 'Approved Successfully')
+        res.redirect(`/goods-requests`);
+    })
+    .catch(err => console.log(err));
 });
 
 

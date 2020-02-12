@@ -29,6 +29,14 @@ const GoodsRequest = new mongoose.Schema({
         type: String,
         required: true
     },
+    approved: {
+        type: Boolean,
+        required: true
+    },
+    rejected: {
+        type: Boolean,
+        required: true
+    },
     date: {
         type: Date,
         default: Date.now
