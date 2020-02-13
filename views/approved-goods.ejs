@@ -57,11 +57,9 @@
                     <h6 class="card-subtitle mb-2 text-muted">Purchase Order Number: <%= good.purchase_order_number %></h6>
                     <p class="card-text">Quatation Details: <%= good.quotation_details %></p>
                     <p class="card-text">Product Purchased Details: <%= good.product_purchased_details %></p>
-                    <form action="#!" class="form-group mt-2" method="POST">
-                        <button class="btn btn-success">
-                            Send to Vendors
-                        </button>
-                    </form>
+                    <a href="/sendvendors/<%= good.id %>" class="btn btn-success">
+                        Send to Vendors
+                    </a>
                 </div>
             </div>
             <% }); %>
