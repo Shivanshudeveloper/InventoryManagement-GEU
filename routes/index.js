@@ -169,6 +169,61 @@ router.get('/sendvendors/:id', ensureAuthenticated, (req, res) => {
         .catch(err => console.log(err));
 });
 
+// Send to all Vendors
+router.get('/sendtoallvendors/:id', ensureAuthenticated, (req, res) => {
+    var emails = '';
+    const goodsId = req.params.id;
+    Vendors_Model.find({})
+        .then(vendors => {
+            vendors.forEach((vendor) => {
+                emails = emails + vendor.email + ',';
+            })
+            emails = emails.substring(0, emails.length-1);
+            // Send Emails to Everyone
+            GoodPurchasedForm_Model.findOne({_id: goodsId})
+                .then((goods) => {
+                    const output = `
+                        <h1>Graphic Era Deemed to be University Goods Request</h1>
+                        <h3>Details:</h3>
+                        <ul>
+                            <li>Title: ${goods.title}</li>
+                            <li>Address: ${goods.address}</li>
+                            <li>Purchase Order Number: ${goods.purchase_order_number}</li>
+                            <li>Quatation Details: ${goods.quotation_details}</li>
+                            <li>Product Purchased Details: ${goods.product_purchased_details}</li>
+                            <li>Download Attachment: <a href="${goods.attachment_URL}" download>Download Attachment</a></li>
+                        </ul>
+                        <a href="http://localhost:5000/">Submit Your Quataion</a>
+                        <h3>In case of any query please contact to the Adminstration</h3>
+                    `;
+                    // create reusable transporter object using the default SMTP transport
+                    let transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            user: 'akhilnegigeu@gmail.com',
+                            pass: 'work@1234'
+                        }    
+                    });
+                    // send mail with defined transport object
+                    let info = transporter.sendMail({
+                        from: 'akhilnegigeu@gmail.com', // sender address
+                        to: emails, // list of receivers
+                        subject: "Request for Goods", // Subject line
+                        text: "Goods Request", // plain text body
+                        html: output // html body
+                    }).then(() => {
+                        console.log("Send Email Message Successfully");
+                        req.flash('success_msg', 'Mail Send Successfully')
+                        res.redirect(`/sendvendors/${goodsId}`);
+                    })
+                    .catch(err => console.log(err));
+                })
+                .catch(err => console.log(err));
+                // Send Email to Everyone
+        })
+        .catch(err => console.log(err));
+});
+
 
 /**
  * @ POST Request
@@ -316,11 +371,14 @@ router.post('/addvendors', ensureAuthenticated, (req, res) => {
 // Mail Send to Vendor for Request
 router.post('/sendrequestvendor/:id', ensureAuthenticated, (req, res) => {
     const goodsId = req.params.id;
-    const emailVendor = req.body.email;
+    var emailVendor = req.body.email;
+    // Replacing all the Whitespaces
+    emailVendor = emailVendor.replace(/\s/g,'');
+
     GoodPurchasedForm_Model.findOne({_id: goodsId})
         .then((goods) => {
             const output = `
-                <p>Goods Request</p>
+                <h1>Graphic Era Deemed to be University Goods Request</h1>
                 <h3>Details:</h3>
                 <ul>
                     <li>Title: ${goods.title}</li>
@@ -328,30 +386,34 @@ router.post('/sendrequestvendor/:id', ensureAuthenticated, (req, res) => {
                     <li>Purchase Order Number: ${goods.purchase_order_number}</li>
                     <li>Quatation Details: ${goods.quotation_details}</li>
                     <li>Product Purchased Details: ${goods.product_purchased_details}</li>
+                    <li>Download Attachment: <a href="${goods.attachment_URL}" download>Download Attachment</a></li>
                 </ul>
-                <h3>Please Contact the Admin for submiting the Quatations</h3>
+                <a href="http://localhost:5000/">Submit Your Quataion</a>
+                <h3>In case of any query please contact to the Adminstration</h3>
             `;
             // create reusable transporter object using the default SMTP transport
             let transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                       user: 'shivanshu981@gmail.com',
-                       pass: 'ironman1234'
+                       user: 'akhilnegigeu@gmail.com',
+                       pass: 'work@1234'
                    }    
             });
             // send mail with defined transport object
             let info = transporter.sendMail({
-                from: 'shivanshu981@gmail.com', // sender address
-                to: `${emailVendor}`, // list of receivers
+                from: 'akhilnegigeu@gmail.com', // sender address
+                to: emailVendor, // list of receivers
                 subject: "Request for Goods", // Subject line
-                text: "Hello world?", // plain text body
+                text: "Goods Request", // plain text body
                 html: output // html body
-            });
-            console.log("Message sent: %s", info.messageId);
-            console.log("Send Email Message Successfully");
+            }).then(() => {
+                console.log("Send Email Message Successfully");
+                req.flash('success_msg', 'Mail Send Successfully')
+                res.redirect(`/sendvendors/${goodsId}`);
+            })
+            .catch(err => console.log(err));
         })
         .catch(err => console.log(err));
-    
 });
 
 

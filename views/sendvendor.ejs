@@ -31,11 +31,11 @@
             <%- include('partials/messages')  %>
         </div>
       <!-- Default box -->
-      <button class="btn-info mt-2 mb-2 btn">
+      <% goodsArr.forEach((good) => { %>
+      <a href="/sendtoallvendors/<%= good.id %>" class="btn-info mt-2 mb-2 btn">
         <i class="fas mr-1 fa-mail-bulk"></i>
         Send to All Vendors
-      </button>
-      <% goodsArr.forEach((good) => { %>
+      </a>
         <div class="card mt-2">
             <div class="card-body">
                 <span class="float-right h5">
@@ -94,8 +94,8 @@
                         </div>
                         <div class="col">
                             <div class="form-group">
-                                <label for="exampleInputEmail1">Email Address</label>
-                                <input required type="text" class="form-control" id="email" name="email" placeholder="vendor@example.com">
+                                <label for="exampleInputEmail1">Email Address (Comma Seperated)</label>
+                                <input required type="text" class="form-control" id="email" name="email" placeholder="vendor@example1.com, vendor@example2.com">
                             </div>
                         </div>
                     </div>
