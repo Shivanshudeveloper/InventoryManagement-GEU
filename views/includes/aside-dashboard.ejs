@@ -104,8 +104,22 @@
             </li>
           <% } %>
 
-          <!-- For Registar -->
+          
+          <!-- For Vendors -->
+          <% if (userType == 'vendor') { %>
+            <li class="nav-item">
+              <a href="/goodsrequestsvendors" class="nav-link">
+                <i class="nav-icon fas fa-th"></i>
+                <p>
+                  Goods Requests
+                </p>
+              </a>
+            </li>
+          <% } %>
 
+
+
+          <!-- For Registar -->
           <% if (userType == 'registar') { %>
             <li class="nav-item">
               <a href="/goods-requests" class="nav-link">

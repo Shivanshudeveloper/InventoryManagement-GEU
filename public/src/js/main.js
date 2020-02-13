@@ -1,4 +1,4 @@
-// Document Upload For Air Ticket System
+// Attachement
 $("#goodsRequestAttachment_btn").change((e) => {
     $("#good_request_form_submit-btn").attr("disabled", true)
     $("#good_request_form_submit-btn").html('Uploading...')
@@ -30,6 +30,41 @@ $("#goodsRequestAttachment_btn").change((e) => {
         }
     );
 });
+
+
+// Attachement of Quatation
+$("#quatation-btn").change((e) => {
+    $("#sendQuatation-btn").attr("disabled", true)
+    $("#sendQuatation-btn").html('Uploading...')
+    $("#attachAttachment-File").html('Uploading...')
+    $("#sendQuatation-btn").attr('class', 'btn w-25 btn-secondary')
+    var file = e.target.files[0];
+    var today_timestamp = new Date();
+    // Create a storage ref
+    var uid = create_UUID();
+    var storageRef = firebase.storage().ref('Goods_Quatation_Attachment/' + today_timestamp+'/' + uid +"-" +file.name);
+        fileName = uid +"-" +file.name
+    // Upload File
+    var task = storageRef.put(file);
+    task.on('state_changed',
+        function progress(snapshot) {
+            var percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        },
+        function error(err) {
+            console.log(err);
+        },
+        function complete() {
+            storageRef.getDownloadURL().then((url) => {
+                $("#attachment_URL").val(url);
+                $("#sendQuatation-btn").attr("disabled", false);
+                $("#sendQuatation-btn").html('Send');
+                $("#attachAttachment-File").html('Quatation Uploaded');
+                $("#sendQuatation-btn").attr('class', 'btn w-25 btn-primary');
+            })
+        }
+    );
+});
+
 
 $('.deleteGoodsRequest').on('click', function(e) {
     e.preventDefault();

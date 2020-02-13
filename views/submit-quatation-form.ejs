@@ -32,10 +32,6 @@
         </div>
       <!-- Default box -->
       <% goodsArr.forEach((good) => { %>
-      <a href="/sendtoallvendors/<%= good.id %>" class="btn-info mt-2 mb-2 btn">
-        <i class="fas mr-1 fa-mail-bulk"></i>
-        Send to All Vendors
-      </a>
         <div class="card mt-2">
             <div class="card-body">
                 <small class="text-center mb-2">
@@ -68,33 +64,45 @@
 
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Send to Vendors</h3>
+          <h3 class="card-title">Send Quatation</h3>
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
               <i class="fas fa-minus"></i></button>
           </div>
         </div>
         <div class="card-body">
-          <form action="/sendrequestvendor/<%= good.id %>" method="POST" role="form">
+          <form action="/sendquatation/<%= good.id %>" method="POST" role="form">
                 <div class="card-body">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Vendor Name</label>
+                        <input type="text" value="<%= name %>" class="form-control" id="vendorname" name="vendorname" placeholder="Vendor Name">
+                    </div>
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="exampleInputEmail1">Vendor Name</label>
-                                <input type="text" class="form-control" id="vendorname" name="vendorname" placeholder="Vendor Name">
+                                <label for="exampleInputEmail1">Email Address</label>
+                                <input required type="email" value="<%= email %>" class="form-control" id="email" name="email">
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
-                                <label for="exampleInputEmail1">Email Address (Comma Seperated)</label>
-                                <input required type="text" class="form-control" id="email" name="email" placeholder="vendor@example1.com, vendor@example2.com">
+                                <label for="exampleInputEmail1">Phone</label>
+                                <input required type="text" value="<%= phone %>" class="form-control" id="phone" name="phone">
                             </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Attach Quatation</label>
+                        <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="quatation-btn">
+                        <input type="hidden" id="attachment_URL" name="attachment_URL" value="">
+                        <label class="custom-file-label" id="attachAttachment-File" for="customFile">Choose file</label>
                         </div>
                     </div>
                 </div>
                 <!-- /.card-body -->
                 <center>
-                  <button type="submit" id="sendtoVendor-btn" class="btn w-25 btn-primary">Send</button>
+                  <button type="submit" id="sendQuatation-btn" class="btn w-25 btn-primary">Send</button>
                 </center>
               </form>
         <% }); %>

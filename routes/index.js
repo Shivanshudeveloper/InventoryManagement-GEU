@@ -11,6 +11,8 @@ const nodemailer = require('nodemailer');
 const GoodPurchasedForm_Model = require('../models/GoodsRequestForm');
 // Vendors Module
 const Vendors_Model = require('../models/Vendors');
+// Quatation Model
+const Quatation_Model = require('../models/Quatation');
 
 
 // Home Main Page
@@ -212,7 +214,6 @@ router.get('/sendtoallvendors/:id', ensureAuthenticated, (req, res) => {
                         text: "Goods Request", // plain text body
                         html: output // html body
                     }).then(() => {
-                        console.log("Send Email Message Successfully");
                         req.flash('success_msg', 'Mail Send Successfully')
                         res.redirect(`/sendvendors/${goodsId}`);
                     })
@@ -222,6 +223,45 @@ router.get('/sendtoallvendors/:id', ensureAuthenticated, (req, res) => {
                 // Send Email to Everyone
         })
         .catch(err => console.log(err));
+});
+
+// For Vendors Goods Request Page
+router.get('/goodsrequestsvendors', ensureAuthenticated, (req, res) => {
+    if (req.session.userType != 'vendor') {
+        res.redirect('/dashboard');
+    } else {
+        GoodPurchasedForm_Model.find({})
+        .then(goods => {
+            res.render('goodsrequestsvendors', {
+                name: req.session.name,
+                userType: req.session.userType,
+                goods
+            });
+        })
+        .catch(err => console.log(err));
+    }
+});
+
+// Submit Quatation for the Goods
+router.get('/submitquatation/:id', ensureAuthenticated, (req, res) => {
+    const goodsId = req.params.id;
+    let goodsArr = [];
+    if (req.session.userType != 'vendor') {
+        res.redirect('/dashboard');
+    } else {
+        GoodPurchasedForm_Model.findOne({ _id: goodsId })
+        .then(goods => {
+            goodsArr.push(goods);
+            res.render('submit-quatation-form', {
+                name: req.session.name,
+                email: req.session.email,
+                phone: req.session.phone,
+                userType: req.session.userType,
+                goodsArr
+            });
+        })
+        .catch(err => console.log(err));
+    }
 });
 
 
@@ -349,7 +389,8 @@ router.post('/addvendors', ensureAuthenticated, (req, res) => {
     if (errors.length > 0) {
         res.render('vendors', {
           name: req.session.name,
-          userType: req.session.userType
+          userType: req.session.userType,
+          errors
         });
     }
     else {
@@ -414,6 +455,51 @@ router.post('/sendrequestvendor/:id', ensureAuthenticated, (req, res) => {
             .catch(err => console.log(err));
         })
         .catch(err => console.log(err));
+});
+
+// Send Quataion Request
+router.post('/sendquatation/:id', ensureAuthenticated, (req, res) => {
+    const goodsId = req.params.id;
+    const vendorname = req.body.vendorname,
+          email = req.body.email,
+          phone = req.body.phone,
+          attachment_URL = req.body.attachment_URL;
+
+    let errors = [];
+    let goodsArr = [];
+    if (!vendorname || !attachment_URL || !email || !phone ) {
+        errors.push({ msg: 'Please enter all fields' });
+    } 
+    if (errors.length > 0) {
+        GoodPurchasedForm_Model.findOne({ _id: goodsId })
+        .then(goods => {
+            goodsArr.push(goods);
+            res.render('submit-quatation-form', {
+                name: req.session.name,
+                email: req.session.email,
+                phone: req.session.phone,
+                userType: req.session.userType,
+                goodsArr,
+                errors
+            });
+        })
+        .catch(err => console.log(err));
+    }
+    else {
+        const quatation = new Quatation_Model({
+            vendor_name: vendorname,
+            email,
+            phone,
+            goodsId,
+            quatation_URL: attachment_URL
+        });
+        quatation.save()
+            .then(() => {
+                req.flash('success_msg', 'Quatation Successfully Send')
+                res.redirect(`/submitquatation/${goodsId}`);
+            })
+            .catch(err => console.log(err));
+    }
 });
 
 

@@ -60,7 +60,7 @@ router.post('/register', (req, res) => {
                         email,
                         phone,
                         password,
-                        type: "user"
+                        type: "vendor"
                     })
                     // Hash Password
                     bcrypt.genSalt(10, (err, salt) => bcrypt.hash(newUser.password, salt, (err, hash) => {
