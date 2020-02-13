@@ -6,7 +6,10 @@ const { ensureAuthenticated } = require('../config/auth');
 
 
 // Models Imported
+// Goods Module
 const GoodPurchasedForm_Model = require('../models/GoodsRequestForm');
+// Vendors Module
+const Vendors_Model = require('../models/Vendors');
 
 
 // Home Main Page
@@ -135,6 +138,21 @@ router.get('/rejectedGoods', ensureAuthenticated, (req, res) => {
         .catch(err => console.log(err));
 });
 
+
+// Vendors Page
+router.get('/vendors', ensureAuthenticated, (req, res) => {
+    Vendors_Model.find({})
+        .then(vendors => {
+            res.render('vendors', {
+                name: req.session.name,
+                userType: req.session.userType,
+                vendors
+            });
+        })
+        .catch(err => console.log(err));
+});
+
+
 /**
  * @ POST Request
  */
@@ -247,6 +265,35 @@ router.post('/approvedGoodsRequest/:id', ensureAuthenticated, (req, res) => {
         res.redirect(`/goods-requests`);
     })
     .catch(err => console.log(err));
+});
+
+// Add Vendor
+router.post('/addvendors', ensureAuthenticated, (req, res) => {
+    const {name, address, email, phone} = req.body;
+    let errors = [];
+    if (!name || !address || !email || !phone ) {
+        errors.push({ msg: 'Please enter all fields' });
+    } 
+    if (errors.length > 0) {
+        res.render('vendors', {
+          name: req.session.name,
+          userType: req.session.userType
+        });
+    }
+    else {
+        const vendors = new Vendors_Model({
+            vendor_name: name,
+            address,
+            email,
+            phone
+        });
+        vendors.save()
+            .then(() => {
+                req.flash('success_msg', 'Vendor Successfully Added')
+                res.redirect('/vendors');
+            })
+            .catch(err => console.log(err));
+    }
 });
 
 

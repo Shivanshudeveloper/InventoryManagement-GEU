@@ -93,6 +93,19 @@
             </li>
           <% } %>
 
+          <% if (userType == 'admin') { %>
+            <li class="nav-item">
+              <a href="/vendors" class="nav-link">
+                <i class="nav-icon fas fa-th"></i>
+                <p>
+                  Vendors
+                </p>
+              </a>
+            </li>
+          <% } %>
+
+          <!-- For Registar -->
+
           <% if (userType == 'registar') { %>
             <li class="nav-item">
               <a href="/goods-requests" class="nav-link">
