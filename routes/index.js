@@ -570,11 +570,19 @@ router.post('/searchgoods', ensureAuthenticated, (req, res) => {
     GoodPurchasedForm_Model.findOne( { title: search } )
     .then(good => {
         goods.push(good);
-        res.render('all-goods-request', {
-            name: req.session.name,
-            userType: req.session.userType,
-            goods: goods
-        });
+        if (goods[0] == null) {
+            res.render('all-goods-request', {
+                name: req.session.name,
+                userType: req.session.userType,
+                goods: goods
+            });
+        } else {
+            res.render('all-goods-request', {
+                name: req.session.name,
+                userType: req.session.userType,
+                goods: goods
+            });
+        }
     })
     .catch(err => console.log(err));
 });
@@ -587,7 +595,6 @@ router.post('/searchquatation', ensureAuthenticated, (req, res) => {
     Quatation_Model.findOne( { purpose: search } )
     .then(quatation => {
         quatations.push(quatation);
-        console.log(quatations[0]);
         if (quatations[0] == null) {
             res.render('all-quatations-send', {
                 name: req.session.name,
