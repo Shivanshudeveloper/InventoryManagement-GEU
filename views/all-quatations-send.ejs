@@ -22,6 +22,14 @@
           </div>
         </div><!-- /.container-fluid -->
       </section>
+
+      <section class="content">
+        <form action="/searchquatation" class="form-group" method="POST">
+          <label for="exampleInputEmail1">Search Quatations</label>
+          <input type="search" name="search" id="search" placeholder="Search By Title..." class="form-control">
+          <button type="submit" class="btn-primary mt-2 btn">Search</button>
+        </form>
+      </section>
   
       <!-- Main content -->
       <section class="content">
@@ -38,35 +46,42 @@
             </div>
           </div>
           <div class="card-body">
-            <% quatations.forEach((quatation) => { %>
-            <div class="card">
-                <div class="card-body">
-                    <% if (userType == 'vendor') { %>
-                    <span class="float-right h5">
-                        <form id="deleteGoodsRequest_form" action="/deleteQuatationRequest/<%= quatation.id %>" method="POST">
-                        <button type="button" id="<%= quatation.id %>" class="deleteQuatation btn btn-danger">
-                            <i class="fas fa-trash"></i>
-                            Delete 
-                        </button>
-                      </form>
-                    </span>
-                    <% } %>
-                    <small class="text-center mb-2">
-                        <%= quatation.date.toDateString() %>
-                    </small>
-                    <br>
-                    <br>
-                    <h5 class="card-title"><%= quatation.purpose %></h5> <br> <br>
-                    <h6 class="card-subtitle mb-2 text-muted">Vendors Name: <%= quatation.vendor_name %></h6>
-                    <h6 class="card-subtitle mb-2 text-muted">Address: <%= quatation.email %></h6>
-                    <h6 class="card-subtitle mb-2 text-muted">Purchase Order Number: <%= quatation.phone %></h6>
-                    <a href="<%= quatation.quatation_URL %>" target="_blank" download class="card-link">
-                        <i class="fas fa-download"></i>
-                        Download the Quatation
-                    </a>
+            <% if (quatations[0] == null) { %>
+                <div class="card">
+                    <h2>Nothing Found!</h2>
                 </div>
-            </div>
-            <% }); %>
+            <% } else { %>
+              <% quatations.forEach((quatation) => { %>
+                <div class="card">
+                    <div class="card-body">
+                        <% if (userType == 'vendor') { %>
+                        <span class="float-right h5">
+                            <form id="deleteGoodsRequest_form" action="/deleteQuatationRequest/<%= quatation.id %>" method="POST">
+                            <button type="button" id="<%= quatation.id %>" class="deleteQuatation btn btn-danger">
+                                <i class="fas fa-trash"></i>
+                                Delete 
+                            </button>
+                          </form>
+                        </span>
+                        <% } %>
+                        <small class="text-center mb-2">
+                            <%= quatation.date.toDateString() %>
+                        </small>
+                        <br>
+                        <br>
+                        <h5 class="card-title"><%= quatation.purpose %></h5> <br> <br>
+                        <h6 class="card-subtitle mb-2 text-muted">Vendors Name: <%= quatation.vendor_name %></h6>
+                        <h6 class="card-subtitle mb-2 text-muted">Address: <%= quatation.email %></h6>
+                        <h6 class="card-subtitle mb-2 text-muted">Purchase Order Number: <%= quatation.phone %></h6>
+                        <a href="<%= quatation.quatation_URL %>" target="_blank" download class="card-link">
+                            <i class="fas fa-download"></i>
+                            Download the Quatation
+                        </a>
+                    </div>
+                </div>
+                <% }); %>
+            <% } %>
+            
           </div>
           <!-- /.card-body -->
           <div class="card-footer">

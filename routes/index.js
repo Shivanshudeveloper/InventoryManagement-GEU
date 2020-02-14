@@ -559,6 +559,52 @@ router.post('/deleteQuatationRequest/:id', ensureAuthenticated, (req, res) => {
         .catch(err => console.log(err))
 });
 
+/**
+ * @ Search Fields
+ */
+
+// Search Fields for Goods
+router.post('/searchgoods', ensureAuthenticated, (req, res) => {
+    const { search } = req.body;
+    let goods = [];
+    GoodPurchasedForm_Model.findOne( { title: search } )
+    .then(good => {
+        goods.push(good);
+        res.render('all-goods-request', {
+            name: req.session.name,
+            userType: req.session.userType,
+            goods: goods
+        });
+    })
+    .catch(err => console.log(err));
+});
+
+
+// Search Fields for Quatatin
+router.post('/searchquatation', ensureAuthenticated, (req, res) => {
+    const { search } = req.body;
+    let quatations = [];
+    Quatation_Model.findOne( { purpose: search } )
+    .then(quatation => {
+        quatations.push(quatation);
+        console.log(quatations[0]);
+        if (quatations[0] == null) {
+            res.render('all-quatations-send', {
+                name: req.session.name,
+                userType: req.session.userType,
+                quatations
+            });
+        } else {
+            res.render('all-quatations-send', {
+                name: req.session.name,
+                userType: req.session.userType,
+                quatations
+            });
+        }
+        
+    })
+    .catch(err => console.log(err));
+});
 
 // Exporting Module
 module.exports = router
