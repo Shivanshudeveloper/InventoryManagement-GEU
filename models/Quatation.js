@@ -1,7 +1,15 @@
 const mongoose = require('mongoose');
 
 const quatations = new mongoose.Schema({
+    vendorId: {
+        type: String,
+        required: true
+    },
     vendor_name: {
+        type: String,
+        required: true
+    },
+    purpose: {
         type: String,
         required: true
     },

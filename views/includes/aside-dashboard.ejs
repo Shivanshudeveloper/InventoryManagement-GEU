@@ -104,6 +104,17 @@
             </li>
           <% } %>
 
+          <% if (userType == 'admin') { %>
+            <li class="nav-item">
+              <a href="/quatations-send" class="nav-link">
+                <i class="nav-icon fas fa-th"></i>
+                <p>
+                  Quatation Submitted
+                </p>
+              </a>
+            </li>
+          <% } %>
+
           
           <!-- For Vendors -->
           <% if (userType == 'vendor') { %>
@@ -112,6 +123,17 @@
                 <i class="nav-icon fas fa-th"></i>
                 <p>
                   Goods Requests
+                </p>
+              </a>
+            </li>
+          <% } %>
+
+          <% if (userType == 'vendor') { %>
+            <li class="nav-item">
+              <a href="/quatations-send" class="nav-link">
+                <i class="nav-icon fas fa-th"></i>
+                <p>
+                  Quatations Send
                 </p>
               </a>
             </li>

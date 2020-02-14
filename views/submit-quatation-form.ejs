@@ -73,10 +73,20 @@
         <div class="card-body">
           <form action="/sendquatation/<%= good.id %>" method="POST" role="form">
                 <div class="card-body">
-                    <div class="form-group">
+                  <div class="row">
+                    <div class="col">
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Purpose for Quatation</label>
+                        <input type="text" class="form-control" required id="purpose" name="purpose" placeholder="example: For Computer Lab">
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="form-group">
                         <label for="exampleInputEmail1">Vendor Name</label>
                         <input type="text" value="<%= name %>" class="form-control" id="vendorname" name="vendorname" placeholder="Vendor Name">
+                      </div>
                     </div>
+                  </div>
                     <div class="row">
                         <div class="col">
                             <div class="form-group">

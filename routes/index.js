@@ -249,7 +249,7 @@ router.get('/submitquatation/:id', ensureAuthenticated, (req, res) => {
     if (req.session.userType != 'vendor') {
         res.redirect('/dashboard');
     } else {
-        GoodPurchasedForm_Model.findOne({ _id: goodsId })
+    GoodPurchasedForm_Model.findOne({ _id: goodsId })
         .then(goods => {
             goodsArr.push(goods);
             res.render('submit-quatation-form', {
@@ -260,9 +260,41 @@ router.get('/submitquatation/:id', ensureAuthenticated, (req, res) => {
                 goodsArr
             });
         })
-        .catch(err => console.log(err));
+        .catch(err => console.log(err));        
     }
 });
+
+// All Quatations Send
+router.get('/quatations-send', ensureAuthenticated, (req, res) => {
+    const userId = req.session.userId;
+    const userType = req.session.userType;
+    if (userType == 'admin') {
+        Quatation_Model.find({})
+            .then(quatations => {
+                res.render('all-quatations-send', {
+                    name: req.session.name,
+                    userType: req.session.userType,
+                    quatations
+                });
+            })
+            .catch(err => console.log(err));
+    } else if (userType == 'vendor') {
+        Quatation_Model.find({ vendorId: userId })
+            .then(quatations => {
+                res.render('all-quatations-send', {
+                    name: req.session.name,
+                    userType: req.session.userType,
+                    quatations
+                });
+            })
+            .catch(err => console.log(err));
+    } else {
+        res.redirect('/dashboard');
+    }
+    
+    
+});
+
 
 
 /**
@@ -461,13 +493,15 @@ router.post('/sendrequestvendor/:id', ensureAuthenticated, (req, res) => {
 router.post('/sendquatation/:id', ensureAuthenticated, (req, res) => {
     const goodsId = req.params.id;
     const vendorname = req.body.vendorname,
+          purpose = req.body.purpose,
           email = req.body.email,
           phone = req.body.phone,
+          vendorId = req.session.userId,
           attachment_URL = req.body.attachment_URL;
 
     let errors = [];
     let goodsArr = [];
-    if (!vendorname || !attachment_URL || !email || !phone ) {
+    if (!vendorname || !purpose || !attachment_URL || !email || !phone ) {
         errors.push({ msg: 'Please enter all fields' });
     } 
     if (errors.length > 0) {
@@ -486,20 +520,43 @@ router.post('/sendquatation/:id', ensureAuthenticated, (req, res) => {
         .catch(err => console.log(err));
     }
     else {
-        const quatation = new Quatation_Model({
-            vendor_name: vendorname,
-            email,
-            phone,
-            goodsId,
-            quatation_URL: attachment_URL
-        });
-        quatation.save()
-            .then(() => {
-                req.flash('success_msg', 'Quatation Successfully Send')
-                res.redirect(`/submitquatation/${goodsId}`);
+        Quatation_Model.countDocuments({vendorId: vendorId, goodsId: goodsId})
+            .then(count => {
+                if (count > 0) {
+                    req.flash('info_msg', 'You Have Already Submitted the Quatation')
+                    res.redirect(`/submitquatation/${goodsId}`);
+                } else {
+                    const quatation = new Quatation_Model({
+                        vendorId,
+                        vendor_name: vendorname,
+                        purpose,
+                        email,
+                        phone,
+                        goodsId,
+                        quatation_URL: attachment_URL
+                    });
+                    quatation.save()
+                        .then(() => {
+                            req.flash('success_msg', 'Quatation Successfully Send')
+                            res.redirect(`/submitquatation/${goodsId}`);
+                        })
+                        .catch(err => console.log(err));
+                }
             })
             .catch(err => console.log(err));
     }
+});
+
+
+// Delete the Quatation Request
+router.post('/deleteQuatationRequest/:id', ensureAuthenticated, (req, res) => {
+    const id = req.params.id;
+    Quatation_Model.deleteOne( { '_id': id } )
+        .then(() => {
+            req.flash('info_msg', 'You Quatation Deleted Successfully')
+            res.redirect('/quatations-send');
+        })
+        .catch(err => console.log(err))
 });
 
 

@@ -66,11 +66,12 @@ $("#quatation-btn").change((e) => {
 });
 
 
+// Deleting the Goods Request
 $('.deleteGoodsRequest').on('click', function(e) {
     e.preventDefault();
     swal({
         title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this imaginary file!",
+        text: "Once deleted, you will not be able to recover this file!",
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -82,6 +83,23 @@ $('.deleteGoodsRequest').on('click', function(e) {
       });
 });
 
+
+// Deleting the Quatations Request
+$('.deleteQuatation').on('click', function(e) {
+    e.preventDefault();
+    swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this file!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+            $(this).closest('form').submit();
+        } 
+      });
+});
 
 
 // Functions Declared
