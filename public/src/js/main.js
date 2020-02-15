@@ -111,11 +111,58 @@ $("#generateReport-btn").on('click', () => {
         }), () => {
             console.log(alldata);
         });
-
-        
     });
-
 });
+
+
+// Registration of the User
+$("#registerUser-btn").on('click', () => {
+    const email = $("#email").val(),
+          pwd = $("#password").val();
+    firebase.auth().createUserWithEmailAndPassword(email, pwd)
+        .then(() => {
+            var user = firebase.auth().currentUser;
+            user.sendEmailVerification()
+                .then(function() {
+                    $("#usersRegistration-form").submit();
+                    // window.location = "/emailverification";
+                }).catch(function(error) {
+                    console.log(error);
+            });
+        })
+        .catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(errorMessage);
+        });
+});
+
+// Sign In User
+$("#signinUser-btn").on('click', () => {
+    const email = $("#email").val(),
+          pwd = $("#password").val();
+
+    firebase.auth().signInWithEmailAndPassword(email, pwd)
+        .then(() => {
+            var user = firebase.auth().currentUser;
+            // Checking for email Verification
+            if (user.emailVerified == false) {
+                window.location = "/emailverification";
+            } else {
+                $("#signinUser-form").submit();
+            }
+        })
+        .catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(errorMessage);
+        });
+});
+
+
+
 
 
 // Functions Declared

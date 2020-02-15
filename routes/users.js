@@ -70,7 +70,7 @@ router.post('/register', (req, res) => {
                         // Save User
                         newUser.save()
                             .then(user => {
-                                req.flash('success_msg', 'You Are Successfully Registered')
+                                req.flash('success_msg', 'Please Verify Your Email')
                                 res.redirect('/')
                             })
                             .catch(err => console.log(err))

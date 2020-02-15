@@ -18,7 +18,7 @@
   <div class="card">
     <div class="card-body register-card-body">
       <p class="login-box-msg">Register a new membership</p>
-      <form action="/users/register" method="POST">
+      <form action="/users/register" id="usersRegistration-form" method="POST">
         <%- include('partials/messages')  %>
         <div class="input-group mb-3">
           <input type="name" id="name" name="name" value="<%= typeof name != 'undefined' ? name : '' %>" required="required" pattern="^([- \w\d\u00c0-\u024f]+)$" class="form-control" placeholder="Full name">
@@ -70,7 +70,7 @@
             </div>
           </div>
         </div>
-        <button type="submit" class="btn mt-4 mb-4 btn-primary btn-block">Register</button>
+        <button type="button" id="registerUser-btn" class="btn mt-4 mb-4 btn-primary btn-block">Register</button>
       </form>
       <a href="/" class="text-center">I already have a membership</a>
     </div>

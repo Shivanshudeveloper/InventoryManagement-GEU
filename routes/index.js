@@ -8,7 +8,12 @@ const nodemailer = require('nodemailer');
 // Excel
 const xl = require('excel4node');
 // Create a new instance of a Workbook class
+/**
+ * Can be use in future prespective for generation of excel reports
+ */
 const wb = new xl.Workbook();
+// Path Module
+const path = require('path');
 
 // Models Imported
 // Goods Module
@@ -815,6 +820,11 @@ router.get("/exportExcel", (req, res) => {
             res.json(goods);
         })
         .catch(err => console.log(err));
+});
+
+// Email Verification Link Page Route Redirection
+router.get('/emailverification', (req, res) => {
+    res.sendFile(path.join(__dirname + '/emailVerification.html'));
 });
 
 // Exporting Module

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Managemet | GEU</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <!-- Firebase -->
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.8.1/firebase-app.js"></script>
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.8.1/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.8.2/firebase-auth.js"></script>
+</head>
+<body>
+    <div class="container" style="margin-top: 10%;">
+
+        
+        <center>
+            <img class="img img-fluid w-25" src="/dist/img/email-verification.gif" alt="" srcset="">
+            <div id="resendLink" class="alert mt-2 w-50 alert-primary" role="alert">
+                A verification link send to the email
+            </div>
+            <a href="/" class="btn w-50 mt-2 btn-primary">Sign In</a>
+            <a href="/" class="btn w-50 mt-2 btn-outline-success">Register</a>
+            <!-- <button type="button" id="resendLink-btn" class="btn w-50 mt-2 btn-outline-info">Resend the Link</button> -->
+        </center>
+    </div>
+
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyDqW1JukvPWxtjo3ajoy51nImLXQLCjPX0",
+            authDomain: "management-cloud-geu.firebaseapp.com",
+            databaseURL: "https://management-cloud-geu.firebaseio.com",
+            projectId: "management-cloud-geu",
+            storageBucket: "management-cloud-geu.appspot.com",
+            messagingSenderId: "151449416152",
+            appId: "1:151449416152:web:35059fe5a1a2397aac02ad",
+            measurementId: "G-Y8MCFXKV3D"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+        // Resend the Email Verification Link
+        $("#resendLink-btn").on('click', () => {
+            var user = firebase.auth().currentUser;
+            user.sendEmailVerification()
+                .then(function() {
+                    $("#resendLink").html('Link Resend Successfully');
+                }).catch(function(error) {
+                    console.log(error);
+                });
+        });
+    </script>
+</body>
+</html>
