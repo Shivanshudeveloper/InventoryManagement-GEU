@@ -1,0 +1,115 @@
+<div class="wrapper">
+    <!-- Navbar -->
+    <%- include('includes/navigation-dashboard.ejs') %>
+    <!-- /.navbar -->
+  
+    <!-- Main Sidebar Container -->
+    <%- include('includes/aside-dashboard.ejs') %>
+  
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6 h2 text-primary">
+              <i class="fas fa-boxes"></i>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">Purchase Order Send to Vendors</li>
+              </ol>
+            </div>
+          </div>
+        </div><!-- /.container-fluid -->
+      </section>
+  
+      <!-- Main content -->
+      <section class="content">
+          <div class="div mt-1 mb-1">
+              <%- include('partials/messages')  %>
+          </div>
+        <!-- Default box -->
+        <% goodsArr.forEach((good) => { %>
+        <a href="/sendtoallvendorspurchaseorder/<%= good.id %>" class="btn-info mt-2 mb-2 btn">
+          <i class="fas mr-1 fa-mail-bulk"></i>
+          Send to All Vendors
+        </a>
+          <div class="card mt-2">
+            <div class="card-body">
+              <small class="text-center mb-2">
+                  <%= good.date.toDateString() %>
+              </small>
+              <br>
+              <h5 class="card-title"><%= good.title %></h5> <br> <br>
+              <h6 class="card-subtitle mb-2 text-muted">Vendor Name: <%= good.vendor_name %></h6>
+              <h6 class="card-subtitle mb-2 text-muted">Address: <%= good.address %></h6>
+              <h6 class="card-subtitle mb-2 text-muted">Purchase Order Number: <%= good.purchase_order_number %></h6>
+              <h6 class="card-subtitle mb-2 text-muted">Quatation Details: <%= good.quotation_details %></h6>
+              <h6 class="card-subtitle mb-2 text-muted">Product Purchase Details: <%= good.product_purchased_details %></h6>
+              <a class="card-link" href="<%= good.attachment_URL %>" download target="_blank" rel="noopener noreferrer">
+                <i class="fas mr-1 fa-file-download"></i>  
+                Download Attachment
+              </a>
+          </div>
+          </div>
+  
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Send to Vendors</h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                <i class="fas fa-minus"></i></button>
+            </div>
+          </div>
+          <div class="card-body">
+            <form action="/purchaseordersendrequestvendor/<%= good.id %>" method="POST" role="form">
+                  <div class="card-body">
+                      <div class="row">
+                          <div class="col">
+                              <div class="form-group">
+                                  <label for="exampleInputEmail1">Vendor Name</label>
+                                  <input type="text" class="form-control" id="vendorname" name="vendorname" placeholder="Vendor Name">
+                              </div>
+                          </div>
+                          <div class="col">
+                              <div class="form-group">
+                                  <label for="exampleInputEmail1">Email Address (Comma Seperated)</label>
+                                  <input required type="text" class="form-control" id="email" name="email" placeholder="vendor@example1.com, vendor@example2.com">
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <!-- /.card-body -->
+                  <center>
+                    <button type="submit" id="sendtoVendor-btn" class="btn w-25 btn-primary">Send</button>
+                  </center>
+            </form>
+          <% }); %>
+  
+          </div>
+  
+          
+          <!-- /.card-body -->
+          <div class="card-footer">
+            Footer
+          </div>
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+  
+        
+  
+      </section>
+      <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+  
+  
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+      <!-- Control sidebar content goes here -->
+    </aside>
+    <!-- /.control-sidebar -->
+  </div>

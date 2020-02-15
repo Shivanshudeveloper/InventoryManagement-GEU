@@ -176,6 +176,13 @@ router.get('/sendvendors/:id', ensureAuthenticated, (req, res) => {
 router.get('/sendtoallvendors/:id', ensureAuthenticated, (req, res) => {
     var emails = '';
     const goodsId = req.params.id;
+
+    var dateObj = new Date();
+    var month = dateObj.getUTCMonth() + 1; //months from 1-12
+    var day = dateObj.getUTCDate();
+    var year = dateObj.getUTCFullYear();
+    var newdate = year + "/" + month + "/" + day;
+
     Vendors_Model.find({})
         .then(vendors => {
             vendors.forEach((vendor) => {
@@ -189,6 +196,7 @@ router.get('/sendtoallvendors/:id', ensureAuthenticated, (req, res) => {
                         <h1>Graphic Era Deemed to be University Goods Request</h1>
                         <h3>Details:</h3>
                         <ul>
+                            <li>Date: ${newdate}</li>
                             <li>Purpose: ${goods.purpose}</li>
                             <li>Request By: ${goods.request_by}</li>
                             <li>Item: ${goods.item}</li>
@@ -209,12 +217,77 @@ router.get('/sendtoallvendors/:id', ensureAuthenticated, (req, res) => {
                     let info = transporter.sendMail({
                         from: 'akhilnegigeu@gmail.com', // sender address
                         to: emails, // list of receivers
-                        subject: "Request for Goods", // Subject line
+                        subject: "Purchase Order", // Subject line
                         text: "Goods Request", // plain text body
                         html: output // html body
                     }).then(() => {
                         req.flash('success_msg', 'Mail Send Successfully')
                         res.redirect(`/sendvendors/${goodsId}`);
+                    })
+                    .catch(err => console.log(err));
+                })
+                .catch(err => console.log(err));
+                // Send Email to Everyone
+        })
+        .catch(err => console.log(err));
+});
+
+
+// Purchase Order Send to All Vendor
+router.get('/sendtoallvendorspurchaseorder/:id', ensureAuthenticated, (req, res) => {
+    var emails = '';
+    const goodsId = req.params.id;
+
+    var dateObj = new Date();
+    var month = dateObj.getUTCMonth() + 1; //months from 1-12
+    var day = dateObj.getUTCDate();
+    var year = dateObj.getUTCFullYear();
+    var newdate = year + "/" + month + "/" + day;
+
+    Vendors_Model.find({})
+        .then(vendors => {
+            vendors.forEach((vendor) => {
+                emails = emails + vendor.email + ',';
+            })
+            emails = emails.substring(0, emails.length-1);
+            // Send Emails to Everyone
+            GoodPurchasedForm_Model.findOne({_id: goodsId})
+                .then((goods) => {
+                    const output = `
+                        <h1>Graphic Era Deemed to be University Goods Request</h1>
+                        <h3>Details:</h3>
+                        <ul>
+                            <li>Date: ${newdate}</li>
+                            <li>Title: ${goods.title}</li>
+                            <li>Quatation Details: ${goods.quotation_details}</li>
+                            <li>Product Purchase Details: ${goods.product_purchased_details}</li>
+                            <li>
+                            <a href="${goods.attachment_URL}" download target="_blank" rel="noopener noreferrer">
+                                Download Attachment
+                            </a>
+                            </li>
+                        </ul>
+                        <a target="_blank" href="http://localhost:5000/">Submit Your Quataion</a>
+                        <h3>In case of any query please contact to the Adminstration</h3>
+                    `;
+                    // create reusable transporter object using the default SMTP transport
+                    let transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            user: 'akhilnegigeu@gmail.com',
+                            pass: 'work@1234'
+                        }    
+                    });
+                    // send mail with defined transport object
+                    let info = transporter.sendMail({
+                        from: 'akhilnegigeu@gmail.com', // sender address
+                        to: emails, // list of receivers
+                        subject: "Purchase Order", // Subject line
+                        text: "Goods Request", // plain text body
+                        html: output // html body
+                    }).then(() => {
+                        req.flash('success_msg', 'Mail Send Successfully')
+                        res.redirect(`/sendtovendorpurchaseorder/${goodsId}`);
                     })
                     .catch(err => console.log(err));
                 })
@@ -296,12 +369,32 @@ router.get('/quatations-send', ensureAuthenticated, (req, res) => {
 
 // Purchase Order
 router.get('/purchase-order', ensureAuthenticated, (req, res) => {
-    res.render('purchase-order', {
-        name: req.session.name,
-        userType: req.session.userType
-    });
+    GoodPurchasedForm_Model.find({})
+        .then(goods => {
+            res.render('purchase-order', {
+                name: req.session.name,
+                userType: req.session.userType,
+                goods
+            });
+        })
+        .catch(err => console.log(err));
 });
 
+
+router.get('/sendtovendorpurchaseorder/:id', ensureAuthenticated, (req, res) => {
+    const purchaseId = req.params.id;
+    let goodsArr = [];
+    GoodPurchasedForm_Model.findOne({_id: purchaseId})
+        .then(allgoods => {
+            goodsArr.push(allgoods);
+            res.render('purchaseorder-sendvendor', {
+                name: req.session.name,
+                userType: req.session.userType,
+                goodsArr
+            });
+        })
+        .catch(err => console.log(err));
+});
 
 
 /**
@@ -345,7 +438,7 @@ router.post('/goodsrequest', ensureAuthenticated, (req, res) => {
         goodsPurchased.save()
             .then(() => {
                 req.flash('success_msg', 'You Goods Form Submitted Successfully')
-                res.redirect('/goods-request-form');
+                res.redirect('/purchase-order');
             })
             .catch(err => console.log(err));
     }
@@ -449,17 +542,24 @@ router.post('/sendrequestvendor/:id', ensureAuthenticated, (req, res) => {
     // Replacing all the Whitespaces
     emailVendor = emailVendor.replace(/\s/g,'');
 
+    var dateObj = new Date();
+    var month = dateObj.getUTCMonth() + 1; //months from 1-12
+    var day = dateObj.getUTCDate();
+    var year = dateObj.getUTCFullYear();
+    var newdate = year + "/" + month + "/" + day;
+
     Requirements_Model.findOne({_id: goodsId})
         .then((goods) => {
             const output = `
                 <h1>Graphic Era Deemed to be University Goods Request</h1>
                 <h3>Details:</h3>
                 <ul>
+                    <li>Date: ${newdate}</li>
                     <li>Purpose: ${goods.purpose}</li>
                     <li>Item Name: ${goods.item}</li>
                     <li>Specification: ${goods.specification}</li>
                 </ul>
-                <a href="http://localhost:5000/">Submit Your Quataion</a>
+                <a target="_blank" href="http://localhost:5000/">Submit Your Quataion</a>
                 <h3>In case of any query please contact to the Adminstration</h3>
             `;
             // create reusable transporter object using the default SMTP transport
@@ -486,6 +586,8 @@ router.post('/sendrequestvendor/:id', ensureAuthenticated, (req, res) => {
         })
         .catch(err => console.log(err));
 });
+
+
 
 // Send Quataion Request
 router.post('/sendquatation/:id', ensureAuthenticated, (req, res) => {
@@ -590,6 +692,64 @@ router.post('/sendrequirementsitems', ensureAuthenticated, (req, res) => {
     }
 });
 
+router.post('/purchaseordersendrequestvendor/:id', ensureAuthenticated, (req, res) => {
+    const goodsId = req.params.id;
+    var emailVendor = req.body.email;
+    // Replacing all the Whitespaces
+    emailVendor = emailVendor.replace(/\s/g,'');
+
+    var dateObj = new Date();
+    var month = dateObj.getUTCMonth() + 1; //months from 1-12
+    var day = dateObj.getUTCDate();
+    var year = dateObj.getUTCFullYear();
+    var newdate = year + "/" + month + "/" + day;
+
+    GoodPurchasedForm_Model.findOne({_id: goodsId})
+        .then((goods) => {
+            const output = `
+                <h1>Graphic Era Deemed to be University Goods Request</h1>
+                <h3>Details:</h3>
+                <ul>
+                    <li>Date: ${newdate}</li>
+                    <li>Title: ${goods.title}</li>
+                    <li>Quatation Details: ${goods.quotation_details}</li>
+                    <li>Product Purchase Details: ${goods.product_purchased_details}</li>
+                    <li>
+                    <a href="${goods.attachment_URL}" download target="_blank" rel="noopener noreferrer">
+                        Download Attachment
+                    </a>
+                    </li>
+                </ul>
+                <a target="_blank" href="http://localhost:5000/">Submit Your Quataion</a>
+                <h3>In case of any query please contact to the Adminstration</h3>
+            `;
+            // create reusable transporter object using the default SMTP transport
+            let transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                       user: 'akhilnegigeu@gmail.com',
+                       pass: 'work@1234'
+                   }    
+            });
+            // send mail with defined transport object
+            let info = transporter.sendMail({
+                from: 'akhilnegigeu@gmail.com', // sender address
+                to: emailVendor, // list of receivers
+                subject: "Purchase Order", // Subject line
+                text: "Goods Request", // plain text body
+                html: output // html body
+            }).then(() => {
+                console.log("Send Email Message Successfully");
+                req.flash('success_msg', 'Mail Send Successfully')
+                res.redirect(`/sendtovendorpurchaseorder/${goodsId}`);
+            })
+            .catch(err => console.log(err));
+        })
+        .catch(err => console.log(err));
+
+
+});
+
 
 
 /**
@@ -619,8 +779,6 @@ router.post('/searchgoods', ensureAuthenticated, (req, res) => {
     })
     .catch(err => console.log(err));
 });
-
-
 
 
 

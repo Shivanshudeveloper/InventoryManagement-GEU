@@ -17,8 +17,8 @@
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="/">Home</a></li>
-              <li class="breadcrumb-item active">Good Request Form</li>
+              <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+              <li class="breadcrumb-item active">Purchase Order</li>
             </ol>
           </div>
         </div>
@@ -33,67 +33,145 @@
       <!-- Default box -->
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Good Request Form</h3>
+          <h3 class="card-title">Purchase Order</h3>
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
               <i class="fas fa-minus"></i></button>
           </div>
         </div>
         <div class="card-body">
-          <div class="card card-primary">
+            <button type="button" data-toggle="modal" data-target="#exampleModal" class="btn btn-success mt-2 mb-2" style="width: 300px;">
+                Add New Purchase Order
+                <i class="fas ml-1 fa-plus"></i>
+            </button>
+            <!-- Modal -->
+            <div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Purchase Order</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form action="/goodsrequest" method="POST" role="form">
+                      <div class="card-body">
+                        <div class="form-group">
+                          <label for="exampleInputEmail1">Title</label>
+                          <input type="text" class="form-control" id="title" name="title" placeholder="Title">
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputEmail1">Vendor Name</label>
+                          <input type="text" class="form-control" id="vendorname" name="vendorname" placeholder="Vendor Name">
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                              <div class="form-group">
+                                  <label for="exampleInputEmail1">Address</label>
+                                  <input required type="text" class="form-control" id="address" name="address" placeholder="Address">
+                              </div>
+                            </div>
+                            <div class="col">
+                              <div class="form-group">
+                                  <label for="exampleInputEmail1">Purchase Order number(Doc no)</label>
+                                  <input required type="text" class="form-control" id="purchaseordernumber" name="purchaseordernumber" placeholder="Purchase Order number(Doc no)">
+                              </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputEmail1">Quotation Details</label>
+                          <textarea required class="form-control" id="quotationdetails" name="quotationdetails" rows="3" placeholder="Enter ..."></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputEmail1">Details of product to be purchased</label>
+                          <textarea required class="form-control" id="productpurchased_details" name="productpurchased_details" rows="3" placeholder="Enter ..."></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputEmail1">Attach Attachments</label>
+                          <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="goodsRequestAttachment_btn">
+                            <input type="hidden" id="attachment_URL" name="attachment_URL" value="">
+                            <label class="custom-file-label" id="attachAttachment-File" for="customFile">Choose file</label>
+                          </div>
+                        </div>
+      
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" id="good_request_form_submit-btn" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+                </div>
+              </div>
+            </div>
+
+          <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Request Form</h3>
+                <h3 class="card-title">Fixed Header Table</h3>
+                <div class="card-tools">
+                  
+                  <div class="input-group input-group-sm" style="width: 200px;">
+                    <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+                    
+                    <div class="input-group-append">
+                      <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                    </div>
+                    
+                  </div>
+                </div>
               </div>
               <!-- /.card-header -->
-              <!-- form start -->
-              <form action="/goodsrequest" method="POST" role="form">
-                <div class="card-body">
-                  <div class="form-group">
-                    <label for="exampleInputEmail1">Title</label>
-                    <input type="text" class="form-control" id="title" name="title" placeholder="Title">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputEmail1">Vendor Name</label>
-                    <input type="text" class="form-control" id="vendorname" name="vendorname" placeholder="Vendor Name">
-                  </div>
-                  <div class="row">
-                      <div class="col">
-                        <div class="form-group">
-                            <label for="exampleInputEmail1">Address</label>
-                            <input required type="text" class="form-control" id="address" name="address" placeholder="Address">
-                        </div>
-                      </div>
-                      <div class="col">
-                        <div class="form-group">
-                            <label for="exampleInputEmail1">Purchase Order number(Doc no)</label>
-                            <input required type="text" class="form-control" id="purchaseordernumber" name="purchaseordernumber" placeholder="Purchase Order number(Doc no)">
-                        </div>
-                      </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputEmail1">Quotation Details</label>
-                    <textarea required class="form-control" id="quotationdetails" name="quotationdetails" rows="3" placeholder="Enter ..."></textarea>
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputEmail1">Details of product to be purchased</label>
-                    <textarea required class="form-control" id="productpurchased_details" name="productpurchased_details" rows="3" placeholder="Enter ..."></textarea>
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputEmail1">Attach Attachments</label>
-                    <div class="custom-file">
-                      <input type="file" class="custom-file-input" id="goodsRequestAttachment_btn">
-                      <input type="hidden" id="attachment_URL" name="attachment_URL" value="">
-                      <label class="custom-file-label" id="attachAttachment-File" for="customFile">Choose file</label>
-                    </div>
-                  </div>
-
-                </div>
-                <!-- /.card-body -->
-
-                <div class="card-footer">
-                  <button type="submit" id="good_request_form_submit-btn" class="btn btn-primary">Submit</button>
-                </div>
-              </form>
+              <div class="card-body table-responsive p-0" >
+                <table class="table table-head-fixed text-nowrap">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Title</th>
+                      <th>Vendor Name</th>
+                      <th>Purchase Order Number</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% i = 1; %>
+                    <% goods.forEach((good) => { %>
+                    <tr>
+                      <td><%= i %></td>
+                      <td><%= good.title %></td>
+                      <td><%= good.vendor_name %></td>
+                      <td><%= good.purchase_order_number %></td>
+                      <td>
+                          <a href="#!" class="text-info">
+                            <i class="fas fa-edit"></i>
+                            Edit
+                          </a>
+                      </td>
+                      <td>
+                        <a href="#!" class="text-danger" >
+                          <i class="fas fa-trash"></i>
+                          Delete
+                        </a>
+                      </td>
+                      <td>
+                        <a href="#!" class="text-secondary" >
+                          <i class="fas fa-external-link-alt"></i>
+                          View
+                        </a>
+                      </td>
+                      <td>
+                        <a href="/sendtovendorpurchaseorder/<%= good.id %>" class="btn btn-sm btn-primary" >
+                          <i class="fas fa-paper-plane"></i>
+                          Send to Vendors
+                        </a>
+                      </td>
+                    </tr>
+                    <% i= i + 1; %>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
             </div>
         </div>
         <!-- /.card-body -->
@@ -109,13 +187,6 @@
   </div>
   <!-- /.content-wrapper -->
 
-  <footer class="main-footer">
-    <div class="float-right d-none d-sm-block">
-      <b>Version</b> 3.0.3-pre
-    </div>
-    <strong>Copyright &copy; 2014-2019 <a href="http://adminlte.io">AdminLTE.io</a>.</strong> All rights
-    reserved.
-  </footer>
 
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
