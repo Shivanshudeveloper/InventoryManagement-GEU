@@ -5,6 +5,10 @@ const router = express.Router();
 const { ensureAuthenticated } = require('../config/auth');
 // Nodemailer
 const nodemailer = require('nodemailer');
+// Excel
+const xl = require('excel4node');
+// Create a new instance of a Workbook class
+const wb = new xl.Workbook();
 
 // Models Imported
 // Goods Module
@@ -13,6 +17,8 @@ const GoodPurchasedForm_Model = require('../models/GoodsRequestForm');
 const Vendors_Model = require('../models/Vendors');
 // Quatation Model
 const Quatation_Model = require('../models/Quatation');
+// Requirements
+const Requirements_Model = require('../models/RequirementItem');
 
 
 // Home Main Page
@@ -43,7 +49,7 @@ router.get('/goods-request-form', ensureAuthenticated, (req, res) => {
 
 // All Goods Request
 router.get('/all-goods-request', ensureAuthenticated, (req, res) => {
-    GoodPurchasedForm_Model.find({})
+    Requirements_Model.find({})
         .then(goods => {
             res.render('all-goods-request', {
                 name: req.session.name,
@@ -57,26 +63,21 @@ router.get('/all-goods-request', ensureAuthenticated, (req, res) => {
 // Edit Goods Request Form
 router.get('/editGoodsRequest/:id', ensureAuthenticated, (req, res) => {
     const id = req.params.id;
-    GoodPurchasedForm_Model.findOne({ '_id': id})
+    Requirements_Model.findOne({ '_id': id})
         .then(goods => {
             var id = goods.id,
-                title = goods.title,
-                vendor_name = goods.vendor_name,
-                address = goods.address,
-                purchase_order_number = goods.purchase_order_number,
-                quotation_details = goods.quotation_details,
-                product_purchased_details = goods.product_purchased_details,
-                attachment_URL = goods.attachment_URL;
+                request_by = goods.request_by,
+                purpose = goods.purpose,
+                item = goods.item,
+                specification = goods.specification;
+                
             res.render('editGoodsRequest', {
                 name: req.session.name,
                 userType: req.session.userType,
-                title,
-                vendor_name,
-                address,
-                purchase_order_number,
-                quotation_details,
-                product_purchased_details,
-                attachment_URL,
+                request_by,
+                purpose,
+                item,
+                specification,
                 id
             });
         })
@@ -88,7 +89,7 @@ router.get('/goods-requests', ensureAuthenticated, (req, res) => {
     if (req.session.userType != 'registar') {
         res.redirect('/dashboard');
     } else {
-        GoodPurchasedForm_Model.find({approved: false})
+        Requirements_Model.find({approved: false, rejected: false})
         .then(goods => {
             res.render('goods-requests', {
                 name: req.session.name,
@@ -103,13 +104,13 @@ router.get('/goods-requests', ensureAuthenticated, (req, res) => {
 // Registar Disapproved
 router.get('/disapproved/:id', ensureAuthenticated, (req, res) => {
     const id = req.params.id;
-    GoodPurchasedForm_Model.updateOne( {'_id': id }, {
+    Requirements_Model.updateOne( {'_id': id }, {
         $set: {
             rejected: true
         }
     })
     .then(() => {
-        req.flash('success_msg', 'Approved Successfully')
+        req.flash('success_msg', 'Disapproved Successfully')
         res.redirect(`/goods-requests`);
     })
     .catch(err => console.log(err));
@@ -117,7 +118,7 @@ router.get('/disapproved/:id', ensureAuthenticated, (req, res) => {
 
 // All Approved Goods
 router.get('/approved', ensureAuthenticated, (req, res) => {
-    GoodPurchasedForm_Model.find({approved: true})
+    Requirements_Model.find({approved: true})
         .then(goods => {
             res.render('approved-goods', {
                 name: req.session.name,
@@ -130,7 +131,7 @@ router.get('/approved', ensureAuthenticated, (req, res) => {
 
 // All Rejected Goods
 router.get('/rejectedGoods', ensureAuthenticated, (req, res) => {
-    GoodPurchasedForm_Model.find({rejected: true})
+    Requirements_Model.find({rejected: true})
         .then(goods => {
             res.render('rejectedGoods', {
                 name: req.session.name,
@@ -159,7 +160,7 @@ router.get('/vendors', ensureAuthenticated, (req, res) => {
 router.get('/sendvendors/:id', ensureAuthenticated, (req, res) => {
     let goodsArr = [];
     const id = req.params.id;
-    GoodPurchasedForm_Model.findOne({_id: id})
+    Requirements_Model.findOne({_id: id})
         .then((goods) => {
             goodsArr.push(goods);
             res.render('sendvendor', {
@@ -182,18 +183,16 @@ router.get('/sendtoallvendors/:id', ensureAuthenticated, (req, res) => {
             })
             emails = emails.substring(0, emails.length-1);
             // Send Emails to Everyone
-            GoodPurchasedForm_Model.findOne({_id: goodsId})
+            Requirements_Model.findOne({_id: goodsId})
                 .then((goods) => {
                     const output = `
                         <h1>Graphic Era Deemed to be University Goods Request</h1>
                         <h3>Details:</h3>
                         <ul>
-                            <li>Title: ${goods.title}</li>
-                            <li>Address: ${goods.address}</li>
-                            <li>Purchase Order Number: ${goods.purchase_order_number}</li>
-                            <li>Quatation Details: ${goods.quotation_details}</li>
-                            <li>Product Purchased Details: ${goods.product_purchased_details}</li>
-                            <li>Download Attachment: <a href="${goods.attachment_URL}" download>Download Attachment</a></li>
+                            <li>Purpose: ${goods.purpose}</li>
+                            <li>Request By: ${goods.request_by}</li>
+                            <li>Item: ${goods.item}</li>
+                            <li>Specification: ${goods.specification}</li>
                         </ul>
                         <a href="http://localhost:5000/">Submit Your Quataion</a>
                         <h3>In case of any query please contact to the Adminstration</h3>
@@ -230,7 +229,7 @@ router.get('/goodsrequestsvendors', ensureAuthenticated, (req, res) => {
     if (req.session.userType != 'vendor') {
         res.redirect('/dashboard');
     } else {
-        GoodPurchasedForm_Model.find({})
+        Requirements_Model.find({})
         .then(goods => {
             res.render('goodsrequestsvendors', {
                 name: req.session.name,
@@ -249,7 +248,7 @@ router.get('/submitquatation/:id', ensureAuthenticated, (req, res) => {
     if (req.session.userType != 'vendor') {
         res.redirect('/dashboard');
     } else {
-    GoodPurchasedForm_Model.findOne({ _id: goodsId })
+    Requirements_Model.findOne({ _id: goodsId })
         .then(goods => {
             goodsArr.push(goods);
             res.render('submit-quatation-form', {
@@ -293,6 +292,14 @@ router.get('/quatations-send', ensureAuthenticated, (req, res) => {
     }
     
     
+});
+
+// Purchase Order
+router.get('/purchase-order', ensureAuthenticated, (req, res) => {
+    res.render('purchase-order', {
+        name: req.session.name,
+        userType: req.session.userType
+    });
 });
 
 
@@ -347,7 +354,7 @@ router.post('/goodsrequest', ensureAuthenticated, (req, res) => {
 // Delete request for Goods
 router.post('/deleteRequest/:id', ensureAuthenticated, (req, res) => {
     const id = req.params.id;
-    GoodPurchasedForm_Model.deleteOne( { '_id': id } )
+    Requirements_Model.deleteOne( { '_id': id } )
         .then(() => {
             req.flash('info_msg', 'You Goods Request Deleted Successfully')
             res.redirect('/all-goods-request');
@@ -358,34 +365,28 @@ router.post('/deleteRequest/:id', ensureAuthenticated, (req, res) => {
 // Update Goods Request Form
 router.post('/updateGoodRequestForm/:id', ensureAuthenticated, (req, res) => {
     const id = req.params.id;
-    const {vendorname, title, address, purchaseordernumber, quotationdetails, productpurchased_details, attachment_URL} = req.body;
+    const {purpose, request_by, item, specification} = req.body;
     let errors = [];
-    if (!vendorname || !title || !address || !purchaseordernumber || !quotationdetails || !productpurchased_details) {
+    if (!purpose || !request_by || !item || !specification) {
         errors.push({ msg: 'Please enter all fields' });
     } 
     if (errors.length > 0) {
         res.render('goods-request-form', {
-          vendorname,
-          errors,
-          title,
-          address,
-          purchaseordernumber,
-          quotationdetails,
-          productpurchased_details,
+          purpose,
+          request_by,
+          item,
+          specification,
           name: req.session.name,
           userType: req.session.userType
         });
     }
     else {
-        GoodPurchasedForm_Model.updateOne( {'_id': id }, {
+        Requirements_Model.updateOne( {'_id': id }, {
             $set: {
-                title,
-                vendor_name: vendorname,
-                address,
-                purchase_order_number: purchaseordernumber,
-                quotation_details: quotationdetails,
-                product_purchased_details: productpurchased_details,
-                attachment_URL
+                purpose,
+                request_by,
+                item,
+                specification,
             }
         })
         .then(() => {
@@ -399,7 +400,7 @@ router.post('/updateGoodRequestForm/:id', ensureAuthenticated, (req, res) => {
 // Approve the process
 router.post('/approvedGoodsRequest/:id', ensureAuthenticated, (req, res) => {
     const id = req.params.id;
-    GoodPurchasedForm_Model.updateOne( {'_id': id }, {
+    Requirements_Model.updateOne( {'_id': id }, {
         $set: {
             approved: true
         }
@@ -448,18 +449,15 @@ router.post('/sendrequestvendor/:id', ensureAuthenticated, (req, res) => {
     // Replacing all the Whitespaces
     emailVendor = emailVendor.replace(/\s/g,'');
 
-    GoodPurchasedForm_Model.findOne({_id: goodsId})
+    Requirements_Model.findOne({_id: goodsId})
         .then((goods) => {
             const output = `
                 <h1>Graphic Era Deemed to be University Goods Request</h1>
                 <h3>Details:</h3>
                 <ul>
-                    <li>Title: ${goods.title}</li>
-                    <li>Address: ${goods.address}</li>
-                    <li>Purchase Order Number: ${goods.purchase_order_number}</li>
-                    <li>Quatation Details: ${goods.quotation_details}</li>
-                    <li>Product Purchased Details: ${goods.product_purchased_details}</li>
-                    <li>Download Attachment: <a href="${goods.attachment_URL}" download>Download Attachment</a></li>
+                    <li>Purpose: ${goods.purpose}</li>
+                    <li>Item Name: ${goods.item}</li>
+                    <li>Specification: ${goods.specification}</li>
                 </ul>
                 <a href="http://localhost:5000/">Submit Your Quataion</a>
                 <h3>In case of any query please contact to the Adminstration</h3>
@@ -559,6 +557,41 @@ router.post('/deleteQuatationRequest/:id', ensureAuthenticated, (req, res) => {
         .catch(err => console.log(err))
 });
 
+
+// Requirements Form
+router.post('/sendrequirementsitems', ensureAuthenticated, (req, res) => {
+    const {request_by, purpose, item, specification} = req.body;
+    let errors = [];
+    if (!request_by || !purpose || !item || !specification ) {
+        errors.push({ msg: 'Please enter all fields' });
+    } 
+    if (errors.length > 0) {
+        res.render('goods-request-form', {
+          name: req.session.name,
+          userType: req.session.userType,
+          errors
+        });
+    }
+    else {
+        const requirements = new Requirements_Model({
+            request_by,
+            purpose,
+            item,
+            specification,
+            approved: false,
+            rejected: false
+        });
+        requirements.save()
+            .then(() => {
+                req.flash('success_msg', 'Requirements Successfully Submitted')
+                res.redirect('/goods-request-form');
+            })
+            .catch(err => console.log(err));
+    }
+});
+
+
+
 /**
  * @ Search Fields
  */
@@ -588,6 +621,9 @@ router.post('/searchgoods', ensureAuthenticated, (req, res) => {
 });
 
 
+
+
+
 // Search Fields for Quatatin
 router.post('/searchquatation', ensureAuthenticated, (req, res) => {
     const { search } = req.body;
@@ -611,6 +647,16 @@ router.post('/searchquatation', ensureAuthenticated, (req, res) => {
         
     })
     .catch(err => console.log(err));
+});
+
+
+// Excel File Export All Goods Request
+router.get("/exportExcel", (req, res) => {
+    GoodPurchasedForm_Model.find({})
+        .then(goods => {
+            res.json(goods);
+        })
+        .catch(err => console.log(err));
 });
 
 // Exporting Module

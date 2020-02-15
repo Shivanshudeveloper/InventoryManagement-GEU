@@ -101,6 +101,22 @@ $('.deleteQuatation').on('click', function(e) {
       });
 });
 
+// Generate Report
+$("#generateReport-btn").on('click', () => {
+    console.log("Hit");
+    $.get("http://localhost:5000/exportExcel", function(data, status){
+        const res = data
+        alldata = res.map(row => ({
+            vendor_name: row.vendor_name
+        }), () => {
+            console.log(alldata);
+        });
+
+        
+    });
+
+});
+
 
 // Functions Declared
 // Generating UID

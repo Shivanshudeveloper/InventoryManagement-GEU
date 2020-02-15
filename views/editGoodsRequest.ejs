@@ -49,42 +49,24 @@
                 <form action="/updateGoodRequestForm/<%= id %>" method="POST" role="form">
                   <div class="card-body">
                     <div class="form-group">
-                      <label for="exampleInputEmail1">Title</label>
-                      <input type="text" class="form-control" id="title" name="title" value="<%= title %>" placeholder="Title">
+                      <label for="exampleInputEmail1">Purpose</label>
+                      <input type="text" class="form-control" id="purpose" name="purpose" value="<%= purpose %>" placeholder="Title">
                     </div>
                     <div class="form-group">
-                      <label for="exampleInputEmail1">Vendor Name</label>
-                      <input type="text" class="form-control" id="vendorname" value="<%= vendor_name %>" name="vendorname" placeholder="Vendor Name">
+                      <label for="exampleInputEmail1">Request By</label>
+                      <input type="text" class="form-control" id="request_by" value="<%= request_by %>" name="request_by" placeholder="Vendor Name">
                     </div>
                     <div class="row">
                         <div class="col">
                           <div class="form-group">
-                              <label for="exampleInputEmail1">Address</label>
-                              <input required type="text" class="form-control" value="<%= address %>" id="address" name="address" placeholder="Address">
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="form-group">
-                              <label for="exampleInputEmail1">Purchase Order number(Doc no)</label>
-                              <input required type="text" class="form-control" value="<%= purchase_order_number %>" id="purchaseordernumber" name="purchaseordernumber" placeholder="Purchase Order number(Doc no)">
+                              <label for="exampleInputEmail1">Name of Item</label>
+                              <input required type="text" class="form-control" value="<%= item %>" id="item" name="item" placeholder="Address">
                           </div>
                         </div>
                     </div>
                     <div class="form-group">
-                      <label for="exampleInputEmail1">Quotation Details</label>
-                      <textarea required class="form-control" id="quotationdetails" name="quotationdetails" rows="3" placeholder="Enter ..."><%= quotation_details %></textarea>
-                    </div>
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">Details of product to be purchased</label>
-                      <textarea required class="form-control" id="productpurchased_details" name="productpurchased_details" rows="3" placeholder="Enter ..."><%= product_purchased_details %></textarea>
-                    </div>
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">Attach Attachments</label>
-                      <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="goodsRequestAttachment_btn">
-                        <input type="hidden" id="attachment_URL" name="attachment_URL" value="<%= attachment_URL %>">
-                        <label class="custom-file-label" id="attachAttachment-File" for="customFile">Choose file</label>
-                      </div>
+                      <label for="exampleInputEmail1">Specification</label>
+                      <textarea required class="form-control" id="specification" name="specification" rows="3" placeholder="Enter ..."><%= specification %></textarea>
                     </div>
                   </div>
                   <!-- /.card-body -->

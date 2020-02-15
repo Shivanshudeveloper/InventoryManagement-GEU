@@ -39,24 +39,17 @@
           </div>
           <div class="card-body">
             <% goods.forEach((good) => { %>
-            <div class="card">
+              <div class="card">
                 <div class="card-body">
-                    <span class="float-right h6">
-                        <a href="<%= good.attachment_URL %>" target="_blank" download class="card-link">
-                            <i class="fas fa-download"></i>
-                            Download the Attachment
-                        </a>
-                    </span>
                     <small class="text-center mb-2">
                         <%= good.date.toDateString() %>
                     </small>
                     <br>
-                    <h5 class="card-title"><%= good.title %></h5> <br> <br>
-                    <h6 class="card-subtitle mb-2 text-muted">Vendors Name: <%= good.vendor_name %></h6>
-                    <h6 class="card-subtitle mb-2 text-muted">Address: <%= good.address %></h6>
-                    <h6 class="card-subtitle mb-2 text-muted">Purchase Order Number: <%= good.purchase_order_number %></h6>
-                    <p class="card-text">Quatation Details: <%= good.quotation_details %></p>
-                    <p class="card-text">Product Purchased Details: <%= good.product_purchased_details %></p>
+                    <h4 class="card-title font-weight-bold text-danger">Rejected</h4> <br>
+                    <h5 class="card-title mt-2"><%= good.purpose %></h5> <br> <br>
+                    <h6 class="card-subtitle mb-2 text-muted">Request By: <%= good.request_by %></h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Item: <%= good.item %></h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Specification: <%= good.specification %></h6>
                 </div>
             </div>
             <% }); %>
