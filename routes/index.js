@@ -325,7 +325,7 @@ router.get('/sendtoallvendorspurchaseorder/:id', ensureAuthenticated, (req, res)
                                 let info = transporter.sendMail({
                                     from: 'akhilnegigeu@gmail.com', // sender address
                                     to: emails, // list of receivers
-                                    subject: `Quatation Required for ${goods.item}`, // Subject line
+                                    subject: `Quatation Required for ${goods.title}`, // Subject line
                                     text: "Goods Request", // plain text body
                                     html: output // html body
                                 }).then(() => {
