@@ -194,58 +194,69 @@ router.get('/sendtoallvendors/:id', ensureAuthenticated, (req, res) => {
     var year = dateObj.getUTCFullYear();
     var newdate = year + "/" + month + "/" + day;
 
-    Vendors_Model.find({})
-        .then(vendors => {
-            vendors.forEach((vendor) => {
-                emails = emails + vendor.email + ',';
-            })
-            emails = emails.substring(0, emails.length-1);
-            // Send Emails to Everyone
-            Requirements_Model.findOne({_id: goodsId})
-                .then((goods) => {
-                    const output = `
-                        <h1>Graphic Era Deemed to be University Goods Request</h1>
-                        <h3>Details:</h3>
-                        <ul>
-                            <li>Date: ${newdate}</li>
-                            <li>Purpose: ${goods.purpose}</li>
-                            <li>Request By: ${goods.request_by}</li>
-                            <li>Item: ${goods.item}</li>
-                            <li>Specification: ${goods.specification}</li>
-                        </ul>
-                        <a href="https://management-cloud-geu.azurewebsites.net/">Submit Your Quataion</a>
-                        <p>
-                            Regards,
-                            ${userName}
-                            Mob: ${userPhone}
-                        </p>
-                        <h3>In case of any query please contact to the Adminstration</h3>
-                    `;
-                    // create reusable transporter object using the default SMTP transport
-                    let transporter = nodemailer.createTransport({
-                        service: 'gmail',
-                        auth: {
-                            user: 'akhilnegigeu@gmail.com',
-                            pass: 'work@1234'
-                        }    
-                    });
-                    // send mail with defined transport object
-                    let info = transporter.sendMail({
-                        from: 'akhilnegigeu@gmail.com', // sender address
-                        to: emails, // list of receivers
-                        subject: `Quatation Required for ${goods.item}`, // Subject line
-                        text: "Goods Request", // plain text body
-                        html: output // html body
-                    }).then(() => {
-                        req.flash('success_msg', 'Mail Send Successfully')
-                        res.redirect(`/sendvendors/${goodsId}`);
+    Vendors_Model.countDocuments({})
+        .then(count => {
+            if (count < 1) {
+                req.flash('error_msg', 'You have not register any vendor please add vendor first')
+                res.redirect(`/sendtovendorpurchaseorder/${goodsId}`);
+            } else {
+                Vendors_Model.find({})
+                    .then(vendors => {
+                        vendors.forEach((vendor) => {
+                            emails = emails + vendor.email + ',';
+                        })
+                        emails = emails.substring(0, emails.length-1);
+                        // Send Emails to Everyone
+                        Requirements_Model.findOne({_id: goodsId})
+                            .then((goods) => {
+                                const output = `
+                                    <h1>Graphic Era Deemed to be University Goods Request</h1>
+                                    <h3>Details:</h3>
+                                    <ul>
+                                        <li>Date: ${newdate}</li>
+                                        <li>Purpose: ${goods.purpose}</li>
+                                        <li>Request By: ${goods.request_by}</li>
+                                        <li>Item: ${goods.item}</li>
+                                        <li>Specification: ${goods.specification}</li>
+                                    </ul>
+                                    <a href="https://management-cloud-geu.azurewebsites.net/">Submit Your Quataion</a>
+                                    <p>
+                                        Regards,
+                                        ${userName}
+                                        Mob: ${userPhone}
+                                    </p>
+                                    <h3>In case of any query please contact to the Adminstration</h3>
+                                `;
+                                // create reusable transporter object using the default SMTP transport
+                                let transporter = nodemailer.createTransport({
+                                    service: 'gmail',
+                                    auth: {
+                                        user: 'akhilnegigeu@gmail.com',
+                                        pass: 'work@1234'
+                                    }    
+                                });
+                                // send mail with defined transport object
+                                let info = transporter.sendMail({
+                                    from: 'akhilnegigeu@gmail.com', // sender address
+                                    to: emails, // list of receivers
+                                    subject: `Quatation Required for ${goods.item}`, // Subject line
+                                    text: "Goods Request", // plain text body
+                                    html: output // html body
+                                }).then(() => {
+                                    req.flash('success_msg', 'Mail Send Successfully')
+                                    res.redirect(`/sendvendors/${goodsId}`);
+                                })
+                                .catch(err => console.log(err));
+                            })
+                            .catch(err => console.log(err));
+                            // Send Email to Everyone
                     })
                     .catch(err => console.log(err));
-                })
-                .catch(err => console.log(err));
-                // Send Email to Everyone
+            }
         })
         .catch(err => console.log(err));
+
+    
 });
 
 
@@ -263,63 +274,75 @@ router.get('/sendtoallvendorspurchaseorder/:id', ensureAuthenticated, (req, res)
     var year = dateObj.getUTCFullYear();
     var newdate = year + "/" + month + "/" + day;
 
-    Vendors_Model.find({})
-        .then(vendors => {
-            vendors.forEach((vendor) => {
-                emails = emails + vendor.email + ',';
-            })
-            emails = emails.substring(0, emails.length-1);
-            // Send Emails to Everyone
-            GoodPurchasedForm_Model.findOne({_id: goodsId})
-                .then((goods) => {
-                    const output = `
-                        <h1>Graphic Era Deemed to be University Goods Request</h1>
-                        <p>Date: ${newdate}</p>
-                        <h3>Dear Sir:</h3>
-                        <p>The following details are required kindly please look at the followings.</p>
-                        <ul>
-                            <li>Title: ${goods.title}</li>
-                            <li>Quatation Details: ${goods.quotation_details}</li>
-                            <li>Product Purchase Details: ${goods.product_purchased_details}</li>
-                            <li>
-                            <a href="${goods.attachment_URL}" download target="_blank" rel="noopener noreferrer">
-                                Download Attachment
-                            </a>
-                            </li>
-                        </ul>
-                        <a target="_blank" href="https://management-cloud-geu.azurewebsites.net/">Submit Your Quataion</a>
-                        <p>
-                            Regards,
-                            ${userName}
-                            Mob: ${userPhone}
-                        </p>
-                        <h3>In case of any query please contact to the Adminstration</h3>
-                    `;
-                    // create reusable transporter object using the default SMTP transport
-                    let transporter = nodemailer.createTransport({
-                        service: 'gmail',
-                        auth: {
-                            user: 'akhilnegigeu@gmail.com',
-                            pass: 'work@1234'
-                        }    
-                    });
-                    // send mail with defined transport object
-                    let info = transporter.sendMail({
-                        from: 'akhilnegigeu@gmail.com', // sender address
-                        to: emails, // list of receivers
-                        subject: `Quatation Required for ${goods.item}`, // Subject line
-                        text: "Goods Request", // plain text body
-                        html: output // html body
-                    }).then(() => {
-                        req.flash('success_msg', 'Mail Send Successfully')
-                        res.redirect(`/sendtovendorpurchaseorder/${goodsId}`);
+    Vendors_Model.countDocuments({})
+        .then(count => {
+            console.log(count);
+            if (count < 1) {
+                req.flash('error_msg', 'You have not register any vendor please add vendor first')
+                res.redirect(`/sendtovendorpurchaseorder/${goodsId}`);
+            } else {
+                Vendors_Model.find({})
+                    .then(vendors => {
+                        vendors.forEach((vendor) => {
+                            emails = emails + vendor.email + ',';
+                        })
+                        emails = emails.substring(0, emails.length-1);
+                        // Send Emails to Everyone
+                        GoodPurchasedForm_Model.findOne({_id: goodsId})
+                            .then((goods) => {
+                                const output = `
+                                    <h1>Graphic Era Deemed to be University Goods Request</h1>
+                                    <p>Date: ${newdate}</p>
+                                    <h3>Dear Sir:</h3>
+                                    <p>The following details are required kindly please look at the followings.</p>
+                                    <ul>
+                                        <li>Title: ${goods.title}</li>
+                                        <li>Quatation Details: ${goods.quotation_details}</li>
+                                        <li>Product Purchase Details: ${goods.product_purchased_details}</li>
+                                        <li>
+                                        <a href="${goods.attachment_URL}" download target="_blank" rel="noopener noreferrer">
+                                            Download Attachment
+                                        </a>
+                                        </li>
+                                    </ul>
+                                    <a target="_blank" href="https://management-cloud-geu.azurewebsites.net/">Submit Your Quataion</a>
+                                    <p>
+                                        Regards,
+                                        ${userName}
+                                        Mob: ${userPhone}
+                                    </p>
+                                    <h3>In case of any query please contact to the Adminstration</h3>
+                                `;
+                                // create reusable transporter object using the default SMTP transport
+                                let transporter = nodemailer.createTransport({
+                                    service: 'gmail',
+                                    auth: {
+                                        user: 'akhilnegigeu@gmail.com',
+                                        pass: 'work@1234'
+                                    }    
+                                });
+                                // send mail with defined transport object
+                                let info = transporter.sendMail({
+                                    from: 'akhilnegigeu@gmail.com', // sender address
+                                    to: emails, // list of receivers
+                                    subject: `Quatation Required for ${goods.item}`, // Subject line
+                                    text: "Goods Request", // plain text body
+                                    html: output // html body
+                                }).then(() => {
+                                    req.flash('success_msg', 'Mail Send Successfully')
+                                    res.redirect(`/sendtovendorpurchaseorder/${goodsId}`);
+                                })
+                                .catch(err => console.log(err));
+                            })
+                            .catch(err => console.log(err));
+                            // Send Email to Everyone
                     })
                     .catch(err => console.log(err));
-                })
-                .catch(err => console.log(err));
-                // Send Email to Everyone
-        })
+            }
+        })  
         .catch(err => console.log(err));
+
+    
 });
 
 // For Vendors Goods Request Page

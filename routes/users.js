@@ -1,8 +1,16 @@
 // Bring Exrpess
 const express = require('express');
 const router = express.Router();
+
+/**
+ * @ All Modules are exported here
+ */
+
 // User Module
 const User = require('../models/Users');
+// Vendor Module
+const Vendor_Module = require('../models/Vendors');
+
 // Bcrypt for password encryption 
 const bcrypt = require('bcryptjs');
 // Passport for authentication
@@ -17,9 +25,9 @@ router.get('/register', (req, res) => {
 
 // Register Handler
 router.post('/register', (req, res) => {
-    const { name, email, phone, password, password2 } = req.body
+    const { name, email, phone, address, password, password2 } = req.body
     let errors = [];
-    if (!name || !email || !phone || !password || !password2) {
+    if (!name || !email || !phone || !address || !password || !password2) {
         errors.push({ msg: 'Please enter all fields' });
     }
     // Password Check
@@ -50,11 +58,18 @@ router.post('/register', (req, res) => {
                         name,
                         email,
                         phone,
+                        address,
                         password,
                         password2
                     })
                 }
                 else {
+                    const vendorUser = new Vendor_Module({
+                        vendor_name: name,
+                        address,
+                        email,
+                        phone
+                    })
                     const newUser = new User({
                         name,
                         email,
@@ -70,8 +85,12 @@ router.post('/register', (req, res) => {
                         // Save User
                         newUser.save()
                             .then(user => {
-                                req.flash('success_msg', 'Please Verify Your Email')
-                                res.redirect('/')
+                                vendorUser.save()
+                                    .then(() => {
+                                        req.flash('success_msg', 'Please Verify Your Email')
+                                        res.redirect('/')
+                                    })
+                                    .catch(err => console.log(err))
                             })
                             .catch(err => console.log(err))
                     }))
