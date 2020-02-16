@@ -15,6 +15,9 @@ const wb = new xl.Workbook();
 // Path Module
 const path = require('path');
 
+// DOT ENV File configuration requirement
+require('dotenv').config();
+
 // Models Imported
 // Goods Module
 const GoodPurchasedForm_Model = require('../models/GoodsRequestForm');
@@ -182,6 +185,9 @@ router.get('/sendtoallvendors/:id', ensureAuthenticated, (req, res) => {
     var emails = '';
     const goodsId = req.params.id;
 
+    const userName = req.session.name,
+          userPhone = req.session.phone;
+
     var dateObj = new Date();
     var month = dateObj.getUTCMonth() + 1; //months from 1-12
     var day = dateObj.getUTCDate();
@@ -207,7 +213,12 @@ router.get('/sendtoallvendors/:id', ensureAuthenticated, (req, res) => {
                             <li>Item: ${goods.item}</li>
                             <li>Specification: ${goods.specification}</li>
                         </ul>
-                        <a href="http://localhost:5000/">Submit Your Quataion</a>
+                        <a href="${process.env.SERVER_DEV}">Submit Your Quataion</a>
+                        <p>
+                            Regards,
+                            ${userName}
+                            Mob: ${userPhone}
+                        </p>
                         <h3>In case of any query please contact to the Adminstration</h3>
                     `;
                     // create reusable transporter object using the default SMTP transport
@@ -243,6 +254,9 @@ router.get('/sendtoallvendorspurchaseorder/:id', ensureAuthenticated, (req, res)
     var emails = '';
     const goodsId = req.params.id;
 
+    const userName = req.session.name,
+          userPhone = req.session.phone;
+
     var dateObj = new Date();
     var month = dateObj.getUTCMonth() + 1; //months from 1-12
     var day = dateObj.getUTCDate();
@@ -260,9 +274,10 @@ router.get('/sendtoallvendorspurchaseorder/:id', ensureAuthenticated, (req, res)
                 .then((goods) => {
                     const output = `
                         <h1>Graphic Era Deemed to be University Goods Request</h1>
-                        <h3>Details:</h3>
+                        <p>Date: ${newdate}</p>
+                        <h3>Dear Sir:</h3>
+                        <p>The following details are required kindly please look at the followings.</p>
                         <ul>
-                            <li>Date: ${newdate}</li>
                             <li>Title: ${goods.title}</li>
                             <li>Quatation Details: ${goods.quotation_details}</li>
                             <li>Product Purchase Details: ${goods.product_purchased_details}</li>
@@ -272,7 +287,12 @@ router.get('/sendtoallvendorspurchaseorder/:id', ensureAuthenticated, (req, res)
                             </a>
                             </li>
                         </ul>
-                        <a target="_blank" href="http://localhost:5000/">Submit Your Quataion</a>
+                        <a target="_blank" href="${process.env.SERVER_DEV}">Submit Your Quataion</a>
+                        <p>
+                            Regards,
+                            ${userName}
+                            Mob: ${userPhone}
+                        </p>
                         <h3>In case of any query please contact to the Adminstration</h3>
                     `;
                     // create reusable transporter object using the default SMTP transport
@@ -547,6 +567,9 @@ router.post('/sendrequestvendor/:id', ensureAuthenticated, (req, res) => {
     // Replacing all the Whitespaces
     emailVendor = emailVendor.replace(/\s/g,'');
 
+    const userName = req.session.name,
+          userPhone = req.session.phone;
+
     var dateObj = new Date();
     var month = dateObj.getUTCMonth() + 1; //months from 1-12
     var day = dateObj.getUTCDate();
@@ -564,7 +587,12 @@ router.post('/sendrequestvendor/:id', ensureAuthenticated, (req, res) => {
                     <li>Item Name: ${goods.item}</li>
                     <li>Specification: ${goods.specification}</li>
                 </ul>
-                <a target="_blank" href="http://localhost:5000/">Submit Your Quataion</a>
+                <a target="_blank" href="${process.env.SERVER_DEV}">Submit Your Quataion</a>
+                <p>
+                    Regards,
+                    ${userName}
+                    Mob: ${userPhone}
+                </p>
                 <h3>In case of any query please contact to the Adminstration</h3>
             `;
             // create reusable transporter object using the default SMTP transport
@@ -703,19 +731,24 @@ router.post('/purchaseordersendrequestvendor/:id', ensureAuthenticated, (req, re
     // Replacing all the Whitespaces
     emailVendor = emailVendor.replace(/\s/g,'');
 
+    const userName = req.session.name,
+          userPhone = req.session.phone;
+    
     var dateObj = new Date();
     var month = dateObj.getUTCMonth() + 1; //months from 1-12
     var day = dateObj.getUTCDate();
     var year = dateObj.getUTCFullYear();
     var newdate = year + "/" + month + "/" + day;
 
+
     GoodPurchasedForm_Model.findOne({_id: goodsId})
         .then((goods) => {
             const output = `
                 <h1>Graphic Era Deemed to be University Goods Request</h1>
-                <h3>Details:</h3>
+                <p>Date: ${newdate}</p>
+                <h3>Dear Sir:</h3>
+                <p>The following details are required kindly please look at the followings.</p>
                 <ul>
-                    <li>Date: ${newdate}</li>
                     <li>Title: ${goods.title}</li>
                     <li>Quatation Details: ${goods.quotation_details}</li>
                     <li>Product Purchase Details: ${goods.product_purchased_details}</li>
@@ -725,7 +758,12 @@ router.post('/purchaseordersendrequestvendor/:id', ensureAuthenticated, (req, re
                     </a>
                     </li>
                 </ul>
-                <a target="_blank" href="http://localhost:5000/">Submit Your Quataion</a>
+                <a target="_blank" href="${process.env.SERVER_DEV}">Submit Your Quataion</a>
+                <p>
+                    Regards,
+                    ${userName}
+                    Mob: ${userPhone}
+                </p>
                 <h3>In case of any query please contact to the Adminstration</h3>
             `;
             // create reusable transporter object using the default SMTP transport

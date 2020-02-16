@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 module.exports = {
-    MongoURI: 'mongodb+srv://shivanshu981:ironman1234@management-geu-zgalk.mongodb.net/geu-inventory-management?retryWrites=true&w=majority'
+    MongoURI: process.env.HOST_DB_DEV
 }
