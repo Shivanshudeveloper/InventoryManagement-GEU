@@ -67,9 +67,13 @@ app.use((req, res, next) => {
 app.use(passport.initialize());
 app.use(passport.session());
 
+
 // Setting Routes
 app.use('/', require('./routes/index'));
+// Authentication
 app.use('/users', require('./routes/users'));
+// Teachers Module
+app.use('/faculty', require('./routes/faculty'));
 
 // Getting PORT set
 const PORT = process.env.PORT || 5000;

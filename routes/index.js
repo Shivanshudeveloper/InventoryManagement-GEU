@@ -34,6 +34,10 @@ router.get('/', (req, res) => {
     res.render('main');
 });
 
+router.get('/test', (req, res) => {
+    res.render('./test/test')
+});
+
 // Dashboard
 router.get('/dashboard', ensureAuthenticated, (req, res) => {
     req.session.name = req.user.name;
