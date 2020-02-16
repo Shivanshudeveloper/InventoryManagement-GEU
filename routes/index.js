@@ -213,7 +213,7 @@ router.get('/sendtoallvendors/:id', ensureAuthenticated, (req, res) => {
                             <li>Item: ${goods.item}</li>
                             <li>Specification: ${goods.specification}</li>
                         </ul>
-                        <a href="${process.env.SERVER_DEV}">Submit Your Quataion</a>
+                        <a href="https://management-cloud-geu.azurewebsites.net/">Submit Your Quataion</a>
                         <p>
                             Regards,
                             ${userName}
@@ -287,7 +287,7 @@ router.get('/sendtoallvendorspurchaseorder/:id', ensureAuthenticated, (req, res)
                             </a>
                             </li>
                         </ul>
-                        <a target="_blank" href="${process.env.SERVER_DEV}">Submit Your Quataion</a>
+                        <a target="_blank" href="https://management-cloud-geu.azurewebsites.net/">Submit Your Quataion</a>
                         <p>
                             Regards,
                             ${userName}
@@ -587,7 +587,7 @@ router.post('/sendrequestvendor/:id', ensureAuthenticated, (req, res) => {
                     <li>Item Name: ${goods.item}</li>
                     <li>Specification: ${goods.specification}</li>
                 </ul>
-                <a target="_blank" href="${process.env.SERVER_DEV}">Submit Your Quataion</a>
+                <a target="_blank" href="https://management-cloud-geu.azurewebsites.net/">Submit Your Quataion</a>
                 <p>
                     Regards,
                     ${userName}
@@ -758,7 +758,7 @@ router.post('/purchaseordersendrequestvendor/:id', ensureAuthenticated, (req, re
                     </a>
                     </li>
                 </ul>
-                <a target="_blank" href="${process.env.SERVER_DEV}">Submit Your Quataion</a>
+                <a target="_blank" href="https://management-cloud-geu.azurewebsites.net/">Submit Your Quataion</a>
                 <p>
                     Regards,
                     ${userName}
