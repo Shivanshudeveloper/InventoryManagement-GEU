@@ -65,6 +65,10 @@
         </div>
         <div class="card-body">
           <form action="/sendquatation/<%= good.id %>" method="POST" role="form">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Quatation Number</label>
+                  <input required type="text" class="form-control" id="quatation_number" name="quatation_number">
+                </div>
                 <div class="card-body">
                   <div class="row">
                     <div class="col">

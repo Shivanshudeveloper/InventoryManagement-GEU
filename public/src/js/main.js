@@ -119,6 +119,11 @@ $("#generateReport-btn").on('click', () => {
 $("#registerUser-btn").on('click', () => {
     const email = $("#email").val(),
           pwd = $("#password").val();
+    
+    $("#registerUser-btn").html('Registering...');
+    $("#registerUser-btn").attr('class', 'btn btn-secondary');
+    
+    
     firebase.auth().createUserWithEmailAndPassword(email, pwd)
         .then(() => {
             var user = firebase.auth().currentUser;
@@ -134,7 +139,12 @@ $("#registerUser-btn").on('click', () => {
             // Handle Errors here.
             var errorCode = error.code;
             var errorMessage = error.message;
-            console.log(errorMessage);
+            swal({
+                title: "Error",
+                text: `${errorMessage}`,
+                icon: "error",
+                button: "Okay",
+            });
         });
 });
 
@@ -142,6 +152,9 @@ $("#registerUser-btn").on('click', () => {
 $("#signinUser-btn").on('click', () => {
     const email = $("#email").val(),
           pwd = $("#password").val();
+
+    $("#signinUser-btn").html('Sign In...');
+    $("#signinUser-btn").attr('class', 'btn btn-secondary');
 
     firebase.auth().signInWithEmailAndPassword(email, pwd)
         .then(() => {
@@ -157,7 +170,12 @@ $("#signinUser-btn").on('click', () => {
             // Handle Errors here.
             var errorCode = error.code;
             var errorMessage = error.message;
-            console.log(errorMessage);
+            swal({
+                title: "Error",
+                text: `${errorMessage}`,
+                icon: "error",
+                button: "Okay",
+            });
         });
 });
 

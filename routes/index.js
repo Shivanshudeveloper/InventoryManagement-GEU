@@ -655,6 +655,7 @@ router.post('/sendquatation/:id', ensureAuthenticated, (req, res) => {
     const vendorname = req.body.vendorname,
           purpose = req.body.purpose,
           email = req.body.email,
+          quatation_number = req.body.quatation_number,
           phone = req.body.phone,
           vendorId = req.session.userId,
           attachment_URL = req.body.attachment_URL;
@@ -692,7 +693,7 @@ router.post('/sendquatation/:id', ensureAuthenticated, (req, res) => {
                         purpose,
                         email,
                         phone,
-                        goodsId,
+                        quatation_number,
                         quatation_URL: attachment_URL
                     });
                     quatation.save()

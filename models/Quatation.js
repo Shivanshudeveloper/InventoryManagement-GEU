@@ -21,7 +21,7 @@ const quatations = new mongoose.Schema({
         type: String,
         required: true
     },
-    goodsId: {
+    quatation_number: {
         type: String,
         required: true
     },
