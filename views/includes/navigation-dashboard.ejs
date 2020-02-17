@@ -116,6 +116,22 @@
         </li>
       <% } %>
 
+      <% if (userType == 'vendor') { %>
+        <li class="nav-item">
+          <a class="nav-link h5 text-danger" data-slide="true" href="/users/logout">
+              Logout
+          </a>
+        </li>
+      <% } %>
+
+      <% if (userType == 'registar') { %>
+        <li class="nav-item">
+          <a class="nav-link h5 text-danger" data-slide="true" href="/users/logout">
+              Logout
+          </a>
+        </li>
+      <% } %>
+
       <% if (userType == 'registar') { %>
         <li class="nav-item">
           <a class="nav-link h5 text-danger" data-slide="true" href="/users/logout">
