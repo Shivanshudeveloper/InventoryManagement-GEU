@@ -5,6 +5,10 @@ const requirement = new mongoose.Schema({
         type: String,
         required: true
     },
+    request_by_id: {
+        type: String,
+        required: false
+    },
     purpose: {
         type: String,
         required: true
