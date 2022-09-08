@@ -8,7 +8,7 @@
     "connect-flash": "^0.1.1",
     "dotenv": "^8.2.0",
     "ejs": "^3.0.1",
-    "excel4node": "^1.7.2",
+    "excel4node": "^1.8.0",
     "express": "^4.17.1",
     "express-ejs-layouts": "^2.5.0",
     "express-session": "^1.17.0",
